@@ -1,0 +1,11 @@
+# Use os-ken (Ryu fork) which supports Python 3.8+
+os-ken==2.7.0
+flask==3.0.0
+flask-cors==4.0.0
+flask-socketio==5.3.4
+python-socketio==5.10.0
+eventlet==0.35.2
+requests==2.31.0
+netaddr==0.10.1
+pyyaml==6.0.1
+webob==1.8.7
