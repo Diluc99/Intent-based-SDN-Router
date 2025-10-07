@@ -1,0 +1,56 @@
+1 RLock(s) were not greened, to fix this error make sure you run eventlet.monkey_patch() before importing any other modules.
+Starting SDN Router...
+Exception in thread Thread-1 (run_api_server):
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/threading.py", line 1073, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.12/threading.py", line 1010, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/diluc/sdn-router/controller/api_server.py", line 67, in run_api_server
+    socketio.run(app, host='0.0.0.0', port=port, debug=False, use_reloader=False)
+  File "/home/diluc/sdn-router/venv/lib/python3.12/site-packages/flask_socketio/__init__.py", line 685, in run
+    run_server()
+  File "/home/diluc/sdn-router/venv/lib/python3.12/site-packages/flask_socketio/__init__.py", line 662, in run_server
+    eventlet_socket = eventlet.listen(addresses[0][4],
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/diluc/sdn-router/venv/lib/python3.12/site-packages/eventlet/convenience.py", line 78, in listen
+    sock.bind(addr)
+OSError: [Errno 98] Address already in use
+API server starting on port 8080...
+Starting os-ken controller on port 6654...
+loading app sdn_controller.py
+loading app os_ken.controller.ofp_handler
+instantiating app sdn_controller.py of SDNController
+SDN Controller initialized
+instantiating app os_ken.controller.ofp_handler of OFPHandler
+BRICK SDNController
+  CONSUMES EventOFPFlowStatsReply
+  CONSUMES EventOFPPacketIn
+  CONSUMES EventOFPSwitchFeatures
+BRICK ofp_event
+  PROVIDES EventOFPFlowStatsReply TO {'SDNController': {'main'}}
+  PROVIDES EventOFPPacketIn TO {'SDNController': {'main'}}
+  PROVIDES EventOFPSwitchFeatures TO {'SDNController': {'config'}}
+  CONSUMES EventOFPEchoReply
+  CONSUMES EventOFPEchoRequest
+  CONSUMES EventOFPErrorMsg
+  CONSUMES EventOFPHello
+  CONSUMES EventOFPPortDescStatsReply
+  CONSUMES EventOFPPortStatus
+  CONSUMES EventOFPSwitchFeatures
+hub: uncaught exception: Traceback (most recent call last):
+  File "/home/diluc/sdn-router/venv/lib/python3.12/site-packages/os_ken/lib/hub.py", line 69, in _launch
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/diluc/sdn-router/venv/lib/python3.12/site-packages/os_ken/controller/controller.py", line 153, in __call__
+    self.server_loop(self.ofp_tcp_listen_port,
+  File "/home/diluc/sdn-router/venv/lib/python3.12/site-packages/os_ken/controller/controller.py", line 193, in server_loop
+    server = StreamServer((CONF.ofp_listen_host,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/diluc/sdn-router/venv/lib/python3.12/site-packages/os_ken/lib/hub.py", line 136, in __init__
+    self.server = eventlet.listen(listen_info)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/diluc/sdn-router/venv/lib/python3.12/site-packages/eventlet/convenience.py", line 78, in listen
+    sock.bind(addr)
+OSError: [Errno 98] Address already in use
+

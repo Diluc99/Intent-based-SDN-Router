@@ -8,6 +8,9 @@ from os_ken.lib import hub
 import json
 import logging
 
+# Import API server to register controller
+import api_server
+
 class SDNController(app_manager.OSKenApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
 
@@ -27,7 +30,9 @@ class SDNController(app_manager.OSKenApp):
             'Geo-Routing': {'priority': 70, 'method': 'geo_based'}
         }
         
-        self.logger.info("SDN Controller initialized")
+        # Register this controller with the API server
+        api_server.set_controller(self)
+        self.logger.info("✅ SDN Controller initialized and registered with API")
 
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
     def switch_features_handler(self, ev):
@@ -36,7 +41,7 @@ class SDNController(app_manager.OSKenApp):
         parser = datapath.ofproto_parser
 
         self.datapaths[datapath.id] = datapath
-        self.logger.info(f'Switch connected: DPID={datapath.id}')
+        self.logger.info(f'✅ Switch connected: DPID={datapath.id}')
 
         match = parser.OFPMatch()
         actions = [parser.OFPActionOutput(ofproto.OFPP_CONTROLLER,
@@ -133,7 +138,7 @@ class SDNController(app_manager.OSKenApp):
             'status': 'active'
         }
         self.intents.append(intent)
-        self.logger.info(f'Intent added: {intent["name"]}')
+        self.logger.info(f'✅ Intent added: {intent["name"]}')
         self._apply_intent(intent)
         return intent
 
@@ -152,9 +157,15 @@ class SDNController(app_manager.OSKenApp):
         parser = datapath.ofproto_parser
         ofproto = datapath.ofproto
         
+        # Prioritize HTTPS traffic
         match = parser.OFPMatch(eth_type=0x0800, ip_proto=6, tcp_dst=443)
         actions = [parser.OFPActionOutput(ofproto.OFPP_NORMAL)]
         self.add_flow(datapath, 100, match, actions)
+        
+        # Prioritize DNS
+        match = parser.OFPMatch(eth_type=0x0800, ip_proto=17, udp_dst=53)
+        actions = [parser.OFPActionOutput(ofproto.OFPP_NORMAL)]
+        self.add_flow(datapath, 90, match, actions)
 
     def _apply_load_balancing(self, datapath):
         self.logger.info(f'Load balancing applied to switch {datapath.id}')

@@ -7,8 +7,47 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
 </head>
+<!-- Sticky Animated Footer -->
+<script src="https://unpkg.com/framer-motion/dist/framer-motion.umd.js"></script>
+<footer id="footer" 
+  class="fixed bottom-0 left-0 w-full bg-slate-900/90 backdrop-blur-md text-center text-slate-400 text-sm border-t border-slate-700 pt-4 pb-3 opacity-0 shadow-lg">
+  
+  <p>© 2025 Virtual SDN Router Control Panel. All rights reserved.</p>
+  
+  <p class="mt-1">
+    Developed by <span class="text-cyan-400 font-medium">Shivam Jha</span> |
+    <a href="mailto:jhashivam53741@gmail.com" 
+       class="text-cyan-400 hover:text-cyan-300 hover:underline transition">Contact Developer</a>
+  </p>
+  
+  <p class="mt-1">
+    <a href="https://github.com/Diluc99" target="_blank" 
+       class="text-cyan-400 hover:text-cyan-300 hover:underline transition mr-3">GitHub</a>
+    <a href="https://www.linkedin.com/in/shivam-jhaa/" target="_blank" 
+       class="text-cyan-400 hover:text-cyan-300 hover:underline transition">LinkedIn</a>
+  </p>
+</footer>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const footer = document.getElementById("footer");
+    footer.animate(
+      [
+        { opacity: 0, transform: "translateY(20px)" },
+        { opacity: 1, transform: "translateY(0)" }
+      ],
+      { duration: 1000, easing: "ease-out", fill: "forwards" }
+    );
+  });
+</script>
+
 <body class="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 min-h-screen text-white">
-    <div id="app" class="container mx-auto p-6"></div>
+    <div id="app" class="container mx-auto p-6">
+        <div class="text-center py-20">
+            <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-cyan-400 mx-auto mb-4"></div>
+            <p class="text-slate-400">Loading SDN Router...</p>
+        </div>
+    </div>
 
     <script>
         const API_BASE = 'http://localhost:8080/api';
@@ -17,7 +56,6 @@
         let socket;
         let state = {
             intents: [],
-            routes: [],
             flows: [],
             stats: {
                 throughput: 0,
@@ -26,42 +64,65 @@
                 packetLoss: 0
             },
             activeTab: 'intents',
-            connected: false
+            connected: false,
+            loading: true,
+            error: null
         };
 
         // Initialize Socket.IO
         function initSocket() {
-            socket = io(SOCKET_URL);
-            
-            socket.on('connect', () => {
-                state.connected = true;
-                console.log('Connected to SDN Controller');
-                render();
-            });
-            
-            socket.on('disconnect', () => {
-                state.connected = false;
-                console.log('Disconnected from SDN Controller');
-                render();
-            });
-            
-            socket.on('intent_updated', (intent) => {
-                fetchIntents();
-            });
-            
-            socket.on('flow_updated', (flow) => {
-                fetchFlows();
-            });
+            try {
+                socket = io(SOCKET_URL, {
+                    transports: ['websocket', 'polling'],
+                    reconnection: true,
+                    reconnectionDelay: 1000,
+                    reconnectionAttempts: 10
+                });
+                
+                socket.on('connect', () => {
+                    console.log('✅ Connected to SDN Controller');
+                    state.connected = true;
+                    state.error = null;
+                    render();
+                });
+                
+                socket.on('disconnect', () => {
+                    console.log('❌ Disconnected from SDN Controller');
+                    state.connected = false;
+                    render();
+                });
+
+                socket.on('connect_error', (error) => {
+                    console.log('Connection error:', error);
+                    state.connected = false;
+                    render();
+                });
+                
+                socket.on('intent_updated', () => {
+                    console.log('Intent updated');
+                    fetchIntents();
+                });
+
+                socket.on('intent_deleted', () => {
+                    console.log('Intent deleted');
+                    fetchIntents();
+                });
+            } catch (error) {
+                console.error('Socket initialization error:', error);
+            }
         }
 
-        // API Functions
+        // API Functions with better error handling
         async function fetchIntents() {
             try {
                 const response = await fetch(`${API_BASE}/intents`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 state.intents = await response.json();
+                state.error = null;
                 render();
             } catch (error) {
                 console.error('Error fetching intents:', error);
+                state.error = 'Failed to fetch intents';
             }
         }
 
@@ -72,28 +133,35 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(intentData)
                 });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const intent = await response.json();
                 await fetchIntents();
+                showNotification('Intent created successfully', 'success');
                 return intent;
             } catch (error) {
                 console.error('Error creating intent:', error);
+                showNotification('Failed to create intent', 'error');
             }
         }
 
         async function deleteIntent(id) {
             try {
-                await fetch(`${API_BASE}/intents/${id}`, {
+                const response = await fetch(`${API_BASE}/intents/${id}`, {
                     method: 'DELETE'
                 });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 await fetchIntents();
+                showNotification('Intent deleted successfully', 'success');
             } catch (error) {
                 console.error('Error deleting intent:', error);
+                showNotification('Failed to delete intent', 'error');
             }
         }
 
         async function fetchFlows() {
             try {
                 const response = await fetch(`${API_BASE}/flows`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const flowsData = await response.json();
                 state.flows = Object.values(flowsData).flat();
                 render();
@@ -105,6 +173,7 @@
         async function fetchStats() {
             try {
                 const response = await fetch(`${API_BASE}/stats`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 state.stats = await response.json();
                 render();
             } catch (error) {
@@ -115,6 +184,7 @@
         async function fetchTopology() {
             try {
                 const response = await fetch(`${API_BASE}/topology`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const topology = await response.json();
                 console.log('Topology:', topology);
             } catch (error) {
@@ -122,9 +192,52 @@
             }
         }
 
+        async function checkHealth() {
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                if (response.ok) {
+                    state.loading = false;
+                    render();
+                }
+            } catch (error) {
+                console.error('Health check failed:', error);
+                state.error = 'Cannot connect to API server';
+                state.loading = false;
+                render();
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                info: 'bg-blue-500'
+            };
+            
+            notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('animate-fade-out');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
         // Render Functions
         function render() {
             const app = document.getElementById('app');
+            
+            if (state.loading) {
+                return; // Keep loading screen
+            }
+            
+            if (state.error && !state.connected) {
+                app.innerHTML = renderError();
+                return;
+            }
+            
             app.innerHTML = `
                 ${renderHeader()}
                 ${renderMetrics()}
@@ -132,6 +245,29 @@
                 ${renderContent()}
             `;
             attachEventListeners();
+        }
+
+        function renderError() {
+            return `
+                <div class="max-w-2xl mx-auto text-center py-20">
+                    <svg class="w-24 h-24 mx-auto text-red-400 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                    <h2 class="text-2xl font-bold mb-4">Connection Error</h2>
+                    <p class="text-slate-400 mb-6">${state.error || 'Cannot connect to SDN Controller'}</p>
+                    <button onclick="location.reload()" class="bg-cyan-500 hover:bg-cyan-600 px-6 py-3 rounded-lg font-medium">
+                        Retry Connection
+                    </button>
+                    <div class="mt-8 text-left bg-slate-800 rounded-lg p-6">
+                        <h3 class="font-bold mb-2">Troubleshooting:</h3>
+                        <ul class="text-sm text-slate-400 space-y-2">
+                            <li>• Check if controller is running: <code class="bg-slate-900 px-2 py-1 rounded">ps aux | grep launcher.py</code></li>
+                            <li>• Verify API is accessible: <code class="bg-slate-900 px-2 py-1 rounded">curl http://localhost:8080/api/health</code></li>
+                            <li>• Check logs: <code class="bg-slate-900 px-2 py-1 rounded">tail -f ~/sdn-router/logs/controller.log</code></li>
+                        </ul>
+                    </div>
+                </div>
+            `;
         }
 
         function renderHeader() {
@@ -150,7 +286,7 @@
                         </div>
                     </div>
                     <div class="bg-${statusColor}-500/20 border border-${statusColor}-500 rounded-lg px-4 py-2 flex items-center gap-2">
-                        <div class="w-2 h-2 bg-${statusColor}-400 rounded-full animate-pulse"></div>
+                        <div class="w-2 h-2 bg-${statusColor}-400 rounded-full ${state.connected ? 'animate-pulse' : ''}"></div>
                         <span class="text-sm">${statusText}</span>
                     </div>
                 </div>
@@ -160,7 +296,7 @@
         function renderMetrics() {
             return `
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                    <div class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg p-4">
+                    <div class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg p-4 hover:border-cyan-500 transition-colors">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-slate-400 text-sm">Throughput</span>
                             <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -169,7 +305,7 @@
                         </div>
                         <div class="text-2xl font-bold">${state.stats.throughput.toFixed(0)} <span class="text-sm text-slate-400">Mbps</span></div>
                     </div>
-                    <div class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg p-4">
+                    <div class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg p-4 hover:border-yellow-500 transition-colors">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-slate-400 text-sm">Latency</span>
                             <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -178,7 +314,7 @@
                         </div>
                         <div class="text-2xl font-bold">${state.stats.latency.toFixed(1)} <span class="text-sm text-slate-400">ms</span></div>
                     </div>
-                    <div class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg p-4">
+                    <div class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg p-4 hover:border-blue-500 transition-colors">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-slate-400 text-sm">Active Flows</span>
                             <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -187,7 +323,7 @@
                         </div>
                         <div class="text-2xl font-bold">${state.stats.activeFlows}</div>
                     </div>
-                    <div class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg p-4">
+                    <div class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg p-4 hover:border-red-500 transition-colors">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-slate-400 text-sm">Packet Loss</span>
                             <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -243,9 +379,9 @@
                         </h2>
                         <form id="intentForm" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                             <input type="text" id="intentName" placeholder="Intent Name" required
-                                class="bg-slate-900 border border-slate-600 rounded px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400">
+                                class="bg-slate-900 border border-slate-600 rounded px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 transition-colors">
                             <select id="intentPolicy" required
-                                class="bg-slate-900 border border-slate-600 rounded px-4 py-2 text-white focus:outline-none focus:border-cyan-400">
+                                class="bg-slate-900 border border-slate-600 rounded px-4 py-2 text-white focus:outline-none focus:border-cyan-400 transition-colors">
                                 <option value="">Select Policy</option>
                                 <option value="QoS Priority">QoS Priority</option>
                                 <option value="Load Balance">Load Balance</option>
@@ -254,7 +390,7 @@
                                 <option value="Geo-Routing">Geo-Routing</option>
                             </select>
                             <input type="text" id="intentBandwidth" placeholder="Bandwidth (Mbps)"
-                                class="bg-slate-900 border border-slate-600 rounded px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400">
+                                class="bg-slate-900 border border-slate-600 rounded px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 transition-colors">
                             <button type="submit" class="bg-cyan-500 hover:bg-cyan-600 rounded px-6 py-2 font-medium transition-colors">
                                 Add Intent
                             </button>
@@ -282,9 +418,9 @@
                                             </td>
                                         </tr>
                                     ` : state.intents.map(intent => `
-                                        <tr class="hover:bg-slate-900/30">
+                                        <tr class="hover:bg-slate-900/30 transition-colors">
                                             <td class="px-6 py-4 text-sm">${intent.id}</td>
-                                            <td class="px-6 py-4 text-sm">${intent.name}</td>
+                                            <td class="px-6 py-4 text-sm font-medium">${intent.name}</td>
                                             <td class="px-6 py-4 text-sm">${intent.policy}</td>
                                             <td class="px-6 py-4 text-sm">${intent.bandwidth || 'unlimited'}</td>
                                             <td class="px-6 py-4 text-sm">
@@ -297,7 +433,7 @@
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 text-sm">
-                                                <button onclick="handleDeleteIntent(${intent.id})" class="text-red-400 hover:text-red-300">
+                                                <button onclick="handleDeleteIntent(${intent.id})" class="text-red-400 hover:text-red-300 transition-colors">
                                                     Delete
                                                 </button>
                                             </td>
@@ -338,7 +474,7 @@
                                         </td>
                                     </tr>
                                 ` : state.flows.map((flow, idx) => `
-                                    <tr class="hover:bg-slate-900/30">
+                                    <tr class="hover:bg-slate-900/30 transition-colors">
                                         <td class="px-6 py-4 text-sm font-mono">${flow.packet_count || 0}</td>
                                         <td class="px-6 py-4 text-sm font-mono">${flow.byte_count || 0}</td>
                                         <td class="px-6 py-4 text-sm">${flow.duration || 0}s</td>
@@ -353,7 +489,7 @@
                         </table>
                     </div>
                 </div>
-            `;
+                `;
         }
 
         function renderTopology() {
@@ -422,7 +558,7 @@
                                 </div>
                                 <div class="flex justify-between">
                                     <span class="text-slate-400">OF Port:</span>
-                                    <span class="font-mono">6654</span>
+                                    <span class="font-mono">6655</span>
                                 </div>
                             </div>
                         </div>
@@ -430,13 +566,13 @@
                         <div class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg p-6">
                             <h3 class="text-lg font-bold mb-4">Quick Commands</h3>
                             <div class="space-y-2 text-sm font-mono">
-                                <div class="bg-slate-900 rounded p-2">
+                                <div class="bg-slate-900 rounded p-2 cursor-pointer hover:bg-slate-800 transition-colors" onclick="copyToClipboard('ovs-vsctl show')">
                                     $ ovs-vsctl show
                                 </div>
-                                <div class="bg-slate-900 rounded p-2">
+                                <div class="bg-slate-900 rounded p-2 cursor-pointer hover:bg-slate-800 transition-colors" onclick="copyToClipboard('ovs-ofctl dump-flows br0 -O OpenFlow13')">
                                     $ ovs-ofctl dump-flows br0
                                 </div>
-                                <div class="bg-slate-900 rounded p-2">
+                                <div class="bg-slate-900 rounded p-2 cursor-pointer hover:bg-slate-800 transition-colors" onclick="copyToClipboard('ip netns exec host1 ping 10.0.0.2')">
                                     $ ip netns exec host1 ping 10.0.0.2
                                 </div>
                             </div>
@@ -450,6 +586,7 @@
         function attachEventListeners() {
             const form = document.getElementById('intentForm');
             if (form) {
+                form.removeEventListener('submit', handleIntentSubmit);
                 form.addEventListener('submit', handleIntentSubmit);
             }
         }
@@ -487,19 +624,64 @@
             }
         }
 
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification('Command copied to clipboard', 'success');
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+        }
+
         // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
+        async function initialize() {
+            console.log('🚀 Initializing SDN Router Web Interface...');
+            
+            await checkHealth();
             initSocket();
-            fetchIntents();
-            fetchStats();
-            render();
+            
+            // Fetch initial data
+            await Promise.all([
+                fetchIntents(),
+                fetchStats(),
+                fetchFlows()
+            ]);
             
             // Update stats every 3 seconds
             setInterval(fetchStats, 3000);
             
             // Update flows every 5 seconds
             setInterval(fetchFlows, 5000);
-        });
+            
+            console.log('✅ Initialization complete');
+        }
+
+        // Start when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initialize);
+        } else {
+            initialize();
+        }
     </script>
+    
+    <style>
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fade-out {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+        
+        .animate-fade-in {
+            animation: fade-in 0.3s ease-out;
+        }
+        
+        .animate-fade-out {
+            animation: fade-out 0.3s ease-out;
+        }
+    </style>
 </body>
 </html>
+
