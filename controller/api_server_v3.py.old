@@ -1,0 +1,272 @@
+import eventlet
+eventlet.monkey_patch()
+
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+from flask_socketio import SocketIO, emit
+import json
+import logging
+import random
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+app = Flask(__name__)
+
+CORS(app, resources={
+    r"/api/*": {
+        "origins": "*",
+        "methods": ["GET", "POST", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type"]
+    }
+})
+
+socketio = SocketIO(app, 
+                    cors_allowed_origins="*",
+                    async_mode='eventlet',
+                    logger=True,
+                    engineio_logger=False)
+
+controller = None
+conversation_manager = None
+conversation_manager = None
+
+def set_controller(ctrl):
+    global controller
+    controller = ctrl
+    logger.info("Controller set in API server V3")
+
+def set_conversation_manager(conv_mgr):
+    global conversation_manager
+    conversation_manager = conv_mgr
+    logger.info("Conversation Manager set in API server")
+
+# ... (keep all previous endpoints) ...
+
+@app.route('/api/chat', methods=['POST'])
+def chat():
+    """Process chat messages and intents"""
+    data = request.json
+    user_id = data.get('user_id', 'default_user')
+    message = data.get('message', '')
+        
+        if not message:
+            return jsonify({'error': 'No message provided'}), 400
+        
+        logger.info(f"Chat from {user_id}: '{message}'")
+        
+        if not conversation_manager or not controller:
+            return jsonify({'error': 'System not ready'}), 503
+        
+        # Handle confirmations
+        if message.lower() in ['yes', 'y', 'confirm', 'ok', 'apply', 'do it']:
+            result = conversation_manager.confirm_intent(user_id)
+            if result['action'] == 'apply':
+                # Apply the intent
+                intent = controller.add_intent_natural_language(
+                    result['intent_data']['original_input'],
+                    result['intent_data'].get('context', {})
+                )
+                socketio.emit('intent_updated', intent['intent'])
+                result['intent'] = intent['intent']
+            return jsonify(result), 200
+            
+        # Handle cancellations
+        if message.lower() in ['no', 'n', 'cancel', 'stop', 'nevermind']:
+            result = conversation_manager.cancel_intent(user_id)
+            return jsonify(result), 200
+            
+        # Process normal messages
+        try:
+            result = conversation_manager.process_message(user_id, message, controller)
+            # Emit to WebSocket for real-time updates
+            socketio.emit('chat_message', 
+                          {'user_id': user_id,
+                           'message': message,
+                           'response': result.get('response', '')})
+            return jsonify(result), 200
+        except Exception as e:
+            logger.error(f"Error processing message: {e}")
+            return jsonify({
+                'response': 'Sorry, I encountered an error processing your request. Please try again.',
+                'action': 'error'
+            }), 500
+            'user_id': user_id,
+            'message': message,
+            'response': result['response']
+        })
+        
+        return jsonify(result), 200
+        
+    except Exception as e:
+        logger.error(f"Chat error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/chat/history/<user_id>', methods=['GET'])
+def get_chat_history(user_id):
+    """Get chat history for a user"""
+    try:
+        if not conversation_manager:
+            return jsonify({'error': 'Conversation manager not available'}), 503
+        
+        limit = request.args.get('limit', 10, type=int)
+        history = conversation_manager.get_chat_history(user_id, limit)
+        
+        return jsonify({'history': history}), 200
+        
+    except Exception as e:
+        logger.error(f"Error getting chat history: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/chat/clear/<user_id>', methods=['DELETE'])
+def clear_chat(user_id):
+    """Clear chat history for a user"""
+    try:
+        if not conversation_manager:
+            return jsonify({'error': 'Conversation manager not available'}), 503
+        
+        conversation_manager.clear_conversation(user_id)
+        return jsonify({'status': 'cleared'}), 200
+        
+    except Exception as e:
+        logger.error(f"Error clearing chat: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/intents', methods=['GET', 'OPTIONS'])
+def get_intents():
+    if request.method == 'OPTIONS':
+        return '', 204
+    try:
+        if controller:
+            intents = controller.get_intents()
+            logger.info(f"Returning {len(intents)} intents")
+            return jsonify(intents)
+        return jsonify([])
+    except Exception as e:
+        logger.error(f"Error getting intents: {e}")
+        return jsonify([])
+
+@app.route('/api/intents/natural', methods=['POST'])
+def create_intent_natural():
+    """Create intent from natural language"""
+    try:
+        data = request.json
+        user_input = data.get('input', '')
+        context = data.get('context', {})
+        
+        if not user_input:
+            return jsonify({'error': 'No input provided'}), 400
+        
+        logger.info(f"Processing natural language: '{user_input}'")
+        
+        if controller:
+            result = controller.add_intent_natural_language(user_input, context)
+            socketio.emit('intent_updated', result['intent'])
+            return jsonify(result), 201
+        
+        return jsonify({'error': 'Controller not available'}), 503
+    
+    except Exception as e:
+        logger.error(f"Error processing natural language intent: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/intents/parse', methods=['POST'])
+def parse_intent():
+    """Parse intent without applying it"""
+    try:
+        data = request.json
+        user_input = data.get('input', '')
+        context = data.get('context', {})
+        
+        if not user_input:
+            return jsonify({'error': 'No input provided'}), 400
+        
+        if controller:
+            parsed = controller.intent_parser.parse_intent(user_input, context)
+            return jsonify(parsed), 200
+        
+        return jsonify({'error': 'Controller not available'}), 503
+    
+    except Exception as e:
+        logger.error(f"Error parsing intent: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/intents/<int:intent_id>', methods=['DELETE'])
+def delete_intent(intent_id):
+    try:
+        logger.info(f"Deleting intent: {intent_id}")
+        if controller:
+            controller.remove_intent(intent_id)
+            socketio.emit('intent_deleted', {'id': intent_id})
+            return jsonify({'status': 'deleted'})
+        return jsonify({'error': 'Controller not available'}), 503
+    except Exception as e:
+        logger.error(f"Error deleting intent: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/flows', methods=['GET'])
+def get_flows():
+    try:
+        if controller:
+            flows = controller.get_flows()
+            return jsonify(flows)
+        return jsonify({})
+    except Exception as e:
+        logger.error(f"Error getting flows: {e}")
+        return jsonify({})
+
+@app.route('/api/topology', methods=['GET'])
+def get_topology():
+    try:
+        if controller:
+            topology = controller.get_topology()
+            return jsonify(topology)
+        return jsonify({'switches': [], 'links': [], 'hosts': 0})
+    except Exception as e:
+        logger.error(f"Error getting topology: {e}")
+        return jsonify({'switches': [], 'links': [], 'hosts': 0})
+
+@app.route('/api/stats', methods=['GET'])
+def get_stats():
+    try:
+        stats = {
+            'throughput': 756 + random.randint(-100, 100),
+            'latency': 12 + random.uniform(-5, 5),
+            'active_flows': len(controller.get_flows()) if controller else 0,
+            'packet_loss': 0.02 + random.uniform(-0.01, 0.01)
+        }
+        return jsonify(stats)
+    except Exception as e:
+        logger.error(f"Error getting stats: {e}")
+        return jsonify({
+            'throughput': 0,
+            'latency': 0,
+            'active_flows': 0,
+            'packet_loss': 0
+        })
+
+@app.route('/api/health', methods=['GET'])
+def health():
+    return jsonify({
+        'status': 'ok',
+        'controller_connected': controller is not None,
+        'conversation_enabled': conversation_manager is not None,
+        'llm_enabled': conversation_manager.use_llm if conversation_manager else False
+    })
+
+@socketio.on('connect')
+def handle_connect():
+    logger.info('Client connected')
+    emit('connection_response', {'status': 'connected'})
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    logger.info('Client disconnected')
+
+def run_api_server(port=8080):
+    logger.info(f"Starting API server V3 on port {port}")
+    socketio.run(app, host='0.0.0.0', port=port, debug=False, use_reloader=False)
+
+if __name__ == '__main__':
+    run_api_server()
+

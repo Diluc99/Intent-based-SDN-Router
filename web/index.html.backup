@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SDN Router Control Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 min-h-screen text-white">
+    <div id="app" class="container mx-auto p-6">
+        <div class="text-center py-20">
+            <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-cyan-400 mx-auto mb-4"></div>
+            <p class="text-slate-400">Loading SDN Router...</p>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080/api';
+        const SOCKET_URL = 'http://localhost:8080';
+        
+        let socket;
+        let state = {
+            intents: [],
+            flows: [],
+            stats: {
+                throughput: 0,
+                latency: 0,
+                activeFlows: 0,
+                packetLoss: 0
+            },
+            activeTab: 'intents',
+            connected: false,
+            loading: true,
+            error: null
+        };
+
+        // Prevent re-rendering while typing
+        let isTyping = false;
+        let renderTimeout = null;
+
+        function initSocket() {
+            try {
+                socket = io(SOCKET_URL, {
+                    transports: ['websocket', 'polling'],
+                    reconnection: true,
+                    reconnectionDelay: 1000,
+                    reconnectionAttempts: 10
+                });
+                
+                socket.on('connect', () => {
+                    console.log('✅ Connected to SDN Controller');
+                    state.connected = true;
+                    state.error = null;
+                    scheduleRender();
+                });
+                
+                socket.on('disconnect', () => {
+                    console.log('❌ Disconnected from SDN Controller');
+                    state.connected = false;
+                    scheduleRender();
+                });
+
+                socket.on('connect_error', (error) => {
+                    console.log('Connection error:', error);
+                    state.connected = false;
+                    scheduleRender();
+                });
+                
+                socket.on('intent_updated', () => {
+                    console.log('Intent updated');
+                    fetchIntents();
+                });
+
+                socket.on('intent_deleted', () => {
+                    console.log('Intent deleted');
+                    fetchIntents();
+                });
+            } catch (error) {
+                console.error('Socket initialization error:', error);
+            }
+        }
+
+        // Smart rendering - don't re-render while user is typing
+        function scheduleRender() {
+            if (isTyping) return;
+            
+            if (renderTimeout) {
+                clearTimeout(renderTimeout);
+            }
+            
+            renderTimeout = setTimeout(() => {
+                render();
+            }, 100);
+        }
+
+        async function fetchIntents() {
+            try {
+                const response = await fetch(`${API_BASE}/intents`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                state.intents = await response.json();
+                state.error = null;
+                scheduleRender();
+            } catch (error) {
+                console.error('Error fetching intents:', error);
+                state.error = 'Failed to fetch intents';
+            }
+        }
+
+        async function createIntent(intentData) {
+            try {
+                const response = await fetch(`${API_BASE}/intents`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(intentData)
+                });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const intent = await response.json();
+                await fetchIntents();
+                showNotification('Intent created successfully', 'success');
+                return intent;
+            } catch (error) {
+                console.error('Error creating intent:', error);
+                showNotification('Failed to create intent', 'error');
+            }
+        }
+
+        async function deleteIntent(id) {
+            try {
+                const response = await fetch(`${API_BASE}/intents/${id}`, {
+                    method: 'DELETE'
+                });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                await fetchIntents();
+                showNotification('Intent deleted successfully', 'success');
+            } catch (error) {
+                console.error('Error deleting intent:', error);
+                showNotification('Failed to delete intent', 'error');
+            }
+        }
+
+        async function fetchFlows() {
+            try {
+                const response = await fetch(`${API_BASE}/flows`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const flowsData = await response.json();
+                state.flows = Object.values(flowsData).flat();
+                scheduleRender();
+            } catch (error) {
+                console.error('Error fetching flows:', error);
+            }
+        }
+
+        async function fetchStats() {
+            try {
+                const response = await fetch(`${API_BASE}/stats`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const newStats = await response.json();
+                state.stats = newStats;
+                
+                // Only update metrics, don't re-render the whole page
+                updateMetricsOnly();
+            } catch (error) {
+                console.error('Error fetching stats:', error);
+            }
+        }
+
+        function updateMetricsOnly() {
+            // Update only the metric values without full re-render
+            const metricsElements = document.querySelectorAll('[data-metric]');
+            metricsElements.forEach(el => {
+                const metric = el.dataset.metric;
+                if (metric === 'throughput') {
+                    el.textContent = state.stats.throughput.toFixed(0);
+                } else if (metric === 'latency') {
+                    el.textContent = state.stats.latency.toFixed(1);
+                } else if (metric === 'activeFlows') {
+                    el.textContent = state.stats.activeFlows;
+                } else if (metric === 'packetLoss') {
+                    el.textContent = (state.stats.packetLoss * 100).toFixed(2);
+                }
+            });
+        }
+
+        async function fetchTopology() {
+            try {
+                const response = await fetch(`${API_BASE}/topology`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const topology = await response.json();
+                console.log('Topology:', topology);
+            } catch (error) {
+                console.error('Error fetching topology:', error);
+            }
+        }
+
+        async function checkHealth() {
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                if (response.ok) {
+                    state.loading = false;
+                    render();
+                }
+            } catch (error) {
+                console.error('Health check failed:', error);
+                state.error = 'Cannot connect to API server';
+                state.loading = false;
+                render();
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                info: 'bg-blue-500'
+            };
+            
+            notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('animate-fade-out');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        function render() {
+            const app = document.getElementById('app');
+            
+            if (state.loading) {
+                return;
+            }
+            
+            if (state.error && !state.connected) {
+                app.innerHTML = renderError();
+                return;
+            }
+            
+            app.innerHTML = `
+                ${renderHeader()}
+                ${renderMetrics()}
+                ${renderTabs()}
+                ${renderContent()}
+            `;
+            attachEventListeners();
+        }
+
+        function renderError() {
+            return `
+                <div class="max-w-2xl mx-auto text-center py-20">
+                    <svg class="w-24 h-24 mx-auto text-red-400 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                    <h2 class="text-2xl font-bold mb-4">Connection Error</h2>
+                    <p class="text-slate-400 mb-6">${state.error || 'Cannot connect to SDN Controller'}</p>
+                    <button onclick="location.reload()" class="bg-cyan-500 hover:bg-cyan-600 px-6 py-3 rounded-lg font-medium">
+                        Retry Connection
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderHeader() {
+            const statusColor = state.connected ? 'green' : 'red';
+            const statusText = state.connected ? 'Connected' : 'Disconnected';
+            
+            return `
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-10 h-10 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
+                        </svg>
+                        <div>
+                            <h1 class="text-3xl font-bold">Virtual SDN Router</h1>
+                            <p class="text-cyan-300 text-sm">Intent-Based Networking Controller</p>
+                        </div>
+                    </div>
+                    <div class="bg-${statusColor}-500/20 border border-${statusColor}-500 rounded-lg px-4 py-2 flex items-center gap-2">
+                        <div class="w-2 h-2 bg-${statusColor}-400 rounded-full ${state.connected ? 'animate-pulse' : ''}"></div>
+                        <span class="text-sm">${statusText}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderMetrics() {
+            return `
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg p-4 hover:border-cyan-500 transition-colors">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-slate-400 text-sm">Throughput</span>
+                            <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                            </svg>
+                        </div>
+                        <div class="text-2xl font-bold"><span data-metric="throughput">${state.stats.throughput.toFixed(0)}</span> <span class="text-sm text-slate-400">Mbps</span></div>
+                    </div>
+                    <div class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg p-4 hover:border-yellow-500 transition-colors">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-slate-400 text-sm">Latency</span>
+                            <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                        <div class="text-2xl font-bold"><span data-metric="latency">${state.stats.latency.toFixed(1)}</span> <span class="text-sm text-slate-400">ms</span></div>
+                    </div>
+                    <div class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg p-4 hover:border-blue-500 transition-colors">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-slate-400 text-sm">Active Flows</span>
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path>
+                            </svg>
+                        </div>
+                        <div class="text-2xl font-bold"><span data-metric="activeFlows">${state.stats.activeFlows}</span></div>
+                    </div>
+                    <div class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg p-4 hover:border-red-500 transition-colors">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-slate-400 text-sm">Packet Loss</span>
+                            <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="text-2xl font-bold"><span data-metric="packetLoss">${(state.stats.packetLoss * 100).toFixed(2)}</span> <span class="text-sm text-slate-400">%</span></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTabs() {
+            const tabs = ['intents', 'flows', 'topology'];
+            return `
+                <div class="flex gap-2 mb-6 border-b border-slate-700">
+                    ${tabs.map(tab => `
+                        <button onclick="changeTab('${tab}')" class="px-6 py-3 font-medium transition-all ${
+                            state.activeTab === tab 
+                                ? 'text-cyan-400 border-b-2 border-cyan-400' 
+                                : 'text-slate-400 hover:text-slate-200'
+                        }">
+                            ${tab.charAt(0).toUpperCase() + tab.slice(1)}
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function renderContent() {
+            switch(state.activeTab) {
+                case 'intents':
+                    return renderIntents();
+                case 'flows':
+                    return renderFlows();
+                case 'topology':
+                    return renderTopology();
+                default:
+                    return '';
+            }
+        }
+
+        function renderIntents() {
+            return `
+                <div class="space-y-6">
+                    <div class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg p-6">
+                        <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                            <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            Create Network Intent
+                        </h2>
+                        <form id="intentForm" class="grid grid-cols-1 md:grid-cols-4 gap-4" onsubmit="return false;">
+                            <input type="text" id="intentName" placeholder="Intent Name" required
+                                class="bg-slate-900 border border-slate-600 rounded px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 transition-colors">
+                            <select id="intentPolicy" required
+                                class="bg-slate-900 border border-slate-600 rounded px-4 py-2 text-white focus:outline-none focus:border-cyan-400 transition-colors">
+                                <option value="">Select Policy</option>
+                                <option value="QoS Priority">QoS Priority</option>
+                                <option value="Load Balance">Load Balance</option>
+                                <option value="SSL Inspection">SSL Inspection</option>
+                                <option value="Traffic Shaping">Traffic Shaping</option>
+                                <option value="Geo-Routing">Geo-Routing</option>
+                            </select>
+                            <input type="text" id="intentBandwidth" placeholder="Bandwidth (Mbps)"
+                                class="bg-slate-900 border border-slate-600 rounded px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 transition-colors">
+                            <button type="button" onclick="handleIntentSubmit(event)" class="bg-cyan-500 hover:bg-cyan-600 rounded px-6 py-2 font-medium transition-colors">
+                                Add Intent
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-slate-900/50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-sm font-semibold text-slate-300">ID</th>
+                                        <th class="px-6 py-3 text-left text-sm font-semibold text-slate-300">Intent Name</th>
+                                        <th class="px-6 py-3 text-left text-sm font-semibold text-slate-300">Policy</th>
+                                        <th class="px-6 py-3 text-left text-sm font-semibold text-slate-300">Bandwidth</th>
+                                        <th class="px-6 py-3 text-left text-sm font-semibold text-slate-300">Status</th>
+                                        <th class="px-6 py-3 text-left text-sm font-semibold text-slate-300">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-700">
+                                    ${state.intents.length === 0 ? `
+                                        <tr>
+                                            <td colspan="6" class="px-6 py-8 text-center text-slate-400">
+                                                No intents configured. Create one above to get started.
+                                            </td>
+                                        </tr>
+                                    ` : state.intents.map(intent => `
+                                        <tr class="hover:bg-slate-900/30 transition-colors">
+                                            <td class="px-6 py-4 text-sm">${intent.id}</td>
+                                            <td class="px-6 py-4 text-sm font-medium">${intent.name}</td>
+                                            <td class="px-6 py-4 text-sm">${intent.policy}</td>
+                                            <td class="px-6 py-4 text-sm">${intent.bandwidth || 'unlimited'}</td>
+                                            <td class="px-6 py-4 text-sm">
+                                                <span class="inline-flex items-center gap-1 px-2 py-1 rounded text-xs ${
+                                                    intent.status === 'active' 
+                                                        ? 'bg-green-500/20 text-green-400' 
+                                                        : 'bg-slate-600/20 text-slate-400'
+                                                }">
+                                                    ${intent.status}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 text-sm">
+                                                <button onclick="handleDeleteIntent(${intent.id})" class="text-red-400 hover:text-red-300 transition-colors">
+                                                    Delete
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderFlows() {
+            return `
+                <div class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg overflow-hidden">
+                    <div class="p-4 border-b border-slate-700 flex items-center justify-between">
+                        <h2 class="text-xl font-bold">Active Flow Table</h2>
+                        <button onclick="fetchFlows()" class="bg-cyan-500 hover:bg-cyan-600 rounded px-4 py-2 text-sm font-medium transition-colors">
+                            Refresh
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-slate-900/50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-sm font-semibold text-slate-300">Packet Count</th>
+                                    <th class="px-6 py-3 text-left text-sm font-semibold text-slate-300">Byte Count</th>
+                                    <th class="px-6 py-3 text-left text-sm font-semibold text-slate-300">Duration (sec)</th>
+                                    <th class="px-6 py-3 text-left text-sm font-semibold text-slate-300">Priority</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-700">
+                                ${state.flows.length === 0 ? `
+                                    <tr>
+                                        <td colspan="4" class="px-6 py-8 text-center text-slate-400">
+                                            No active flows detected. Generate traffic to see flows.
+                                        </td>
+                                    </tr>
+                                ` : state.flows.map((flow, idx) => `
+                                    <tr class="hover:bg-slate-900/30 transition-colors">
+                                        <td class="px-6 py-4 text-sm font-mono">${flow.packet_count || 0}</td>
+                                        <td class="px-6 py-4 text-sm font-mono">${flow.byte_count || 0}</td>
+                                        <td class="px-6 py-4 text-sm">${flow.duration || 0}s</td>
+                                        <td class="px-6 py-4 text-sm">
+                                            <span class="bg-purple-500/20 text-purple-400 px-2 py-1 rounded text-xs">
+                                                Priority ${flow.priority || 1}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTopology() {
+            return `
+                <div class="space-y-6">
+                    <div class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg p-6">
+                        <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                            <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
+                            </svg>
+                            Network Topology
+                        </h2>
+                        <div class="text-center py-12">
+                            <div class="inline-block text-left bg-slate-900 rounded-lg p-6">
+                                <div class="flex items-center gap-4 mb-3">
+                                    <div class="w-12 h-12 bg-cyan-500/20 border-2 border-cyan-500 rounded-lg flex items-center justify-center">
+                                        <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm">OpenFlow Switch (br0)</span>
+                                </div>
+                                <div class="flex gap-8 ml-8">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-2 h-8 bg-cyan-500"></div>
+                                        <div class="w-10 h-10 bg-blue-500/20 border-2 border-blue-500 rounded-lg flex items-center justify-center">
+                                            <span class="text-xs font-bold">H1</span>
+                                        </div>
+                                        <span class="text-xs text-slate-400">10.0.0.1/24</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-2 h-8 bg-cyan-500"></div>
+                                        <div class="w-10 h-10 bg-blue-500/20 border-2 border-blue-500 rounded-lg flex items-center justify-center">
+                                            <span class="text-xs font-bold">H2</span>
+                                        </div>
+                                        <span class="text-xs text-slate-400">10.0.0.2/24</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function attachEventListeners() {
+            // Mark typing state on input fields
+            const inputs = document.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.addEventListener('focus', () => {
+                    isTyping = true;
+                });
+                input.addEventListener('blur', () => {
+                    isTyping = false;
+                });
+            });
+        }
+
+        async function handleIntentSubmit(e) {
+            if (e) e.preventDefault();
+            
+            const name = document.getElementById('intentName').value;
+            const policy = document.getElementById('intentPolicy').value;
+            const bandwidth = document.getElementById('intentBandwidth').value;
+if (!name || !policy) {
+                showNotification('Please fill in Intent Name and Policy', 'error');
+                return;
+            }
+
+            const intentData = {
+                name: name,
+                policy: policy,
+                bandwidth: bandwidth || 'unlimited'
+            };
+
+            await createIntent(intentData);
+            
+            // Reset form
+            document.getElementById('intentName').value = '';
+            document.getElementById('intentPolicy').value = '';
+            document.getElementById('intentBandwidth').value = '';
+        }
+
+        async function handleDeleteIntent(id) {
+            if (confirm('Are you sure you want to delete this intent?')) {
+                await deleteIntent(id);
+            }
+        }
+
+        function changeTab(tab) {
+            state.activeTab = tab;
+            render();
+            
+            if (tab === 'flows') {
+                fetchFlows();
+            } else if (tab === 'topology') {
+                fetchTopology();
+            }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification('Command copied to clipboard', 'success');
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+        }
+
+        async function initialize() {
+            console.log('🚀 Initializing SDN Router Web Interface...');
+            
+            await checkHealth();
+            initSocket();
+            
+            await Promise.all([
+                fetchIntents(),
+                fetchStats(),
+                fetchFlows()
+            ]);
+            
+            // Update only stats every 3 seconds (without full re-render)
+            setInterval(fetchStats, 3000);
+            
+            // Update flows every 5 seconds
+            setInterval(() => {
+                if (state.activeTab === 'flows') {
+                    fetchFlows();
+                }
+            }, 5000);
+            
+            console.log('✅ Initialization complete');
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initialize);
+        } else {
+            initialize();
+        }
+    </script>
+    
+    <style>
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fade-out {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+        
+        .animate-fade-in {
+            animation: fade-in 0.3s ease-out;
+        }
+        
+        .animate-fade-out {
+            animation: fade-out 0.3s ease-out;
+        }
+    </style>
+</body>
+</html>

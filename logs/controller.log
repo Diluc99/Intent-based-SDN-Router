@@ -1,56 +1,679 @@
-1 RLock(s) were not greened, to fix this error make sure you run eventlet.monkey_patch() before importing any other modules.
-Starting SDN Router...
-Exception in thread Thread-1 (run_api_server):
-Traceback (most recent call last):
-  File "/usr/lib/python3.12/threading.py", line 1073, in _bootstrap_inner
-    self.run()
-  File "/usr/lib/python3.12/threading.py", line 1010, in run
-    self._target(*self._args, **self._kwargs)
-  File "/home/diluc/sdn-router/controller/api_server.py", line 67, in run_api_server
-    socketio.run(app, host='0.0.0.0', port=port, debug=False, use_reloader=False)
-  File "/home/diluc/sdn-router/venv/lib/python3.12/site-packages/flask_socketio/__init__.py", line 685, in run
-    run_server()
-  File "/home/diluc/sdn-router/venv/lib/python3.12/site-packages/flask_socketio/__init__.py", line 662, in run_server
-    eventlet_socket = eventlet.listen(addresses[0][4],
-                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/diluc/sdn-router/venv/lib/python3.12/site-packages/eventlet/convenience.py", line 78, in listen
-    sock.bind(addr)
-OSError: [Errno 98] Address already in use
-API server starting on port 8080...
-Starting os-ken controller on port 6654...
-loading app sdn_controller.py
+2025-10-22 18:40:02,867 - __main__ - INFO - ======================================================================
+2025-10-22 18:40:02,867 - __main__ - INFO - 🚀 Starting SDN Router V3 with Conversational AI
+2025-10-22 18:40:02,868 - __main__ - INFO - ======================================================================
+2025-10-22 18:40:02,870 - __main__ - INFO - ✅ Environment check passed
+2025-10-22 18:40:02,870 - __main__ - INFO -    - LLM Mode: True
+2025-10-22 18:40:02,870 - __main__ - INFO -    - Groq API Key: ********************Vy8e
+2025-10-22 18:40:02,870 - __main__ - INFO - 🤖 Initializing Conversation Manager...
+2025-10-22 18:40:02,872 - conversation_manager - INFO - 🤖 PURE LLM MODE - No rule-based parsing
+2025-10-22 18:40:02,957 - conversation_manager - INFO - ✅ Groq LLM initialized successfully
+2025-10-22 18:40:04,514 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-10-22 18:40:04,520 - conversation_manager - INFO - ✅ Groq connection test successful: OK
+2025-10-22 18:40:04,520 - conversation_manager - INFO - ✅ Conversation Manager initialized in PURE LLM-ONLY mode
+2025-10-22 18:40:04,521 - api_server_v3 - INFO - ✅ Conversation Manager registered with API server
+2025-10-22 18:40:04,521 - __main__ - INFO - ✅ Conversation Manager initialized
+2025-10-22 18:40:04,521 - __main__ - INFO - 🌐 Starting API server on port 8080...
+2025-10-22 18:40:04,522 - api_server_v3 - INFO - 🚀 Starting API server on port 8080
+2025-10-22 18:40:04,534 - __main__ - INFO - ✅ API server started successfully
+2025-10-22 18:40:04,535 - __main__ - INFO -    - Status: ok
+2025-10-22 18:40:04,536 - __main__ - INFO -    - LLM Enabled: None
+2025-10-22 18:40:04,536 - __main__ - INFO - ======================================================================
+2025-10-22 18:40:04,536 - __main__ - INFO - 🎮 Starting OS-KEN SDN Controller on port 6655
+2025-10-22 18:40:04,536 - __main__ - INFO - ======================================================================
+2025-10-22 18:40:04,537 - __main__ - INFO - 
+2025-10-22 18:40:04,537 - __main__ - INFO - 📡 Services Running:
+2025-10-22 18:40:04,537 - __main__ - INFO -    - Web Interface: http://localhost:8001
+2025-10-22 18:40:04,537 - __main__ - INFO -    - API Server: http://localhost:8080
+2025-10-22 18:40:04,537 - __main__ - INFO -    - OpenFlow Controller: localhost:6655
+2025-10-22 18:40:04,538 - __main__ - INFO - 
+2025-10-22 18:40:04,538 - __main__ - INFO - 💬 Chat with the AI to configure your network!
+2025-10-22 18:40:04,538 - __main__ - INFO - ======================================================================
+2025-10-22 18:40:04,538 - __main__ - INFO - 
+2025-10-22 18:40:05,044 - os_ken.base.app_manager - INFO - loading app /home/diluc/sdn-router/controller/sdn_controller_v2.py
+loading app /home/diluc/sdn-router/controller/sdn_controller_v2.py
+2025-10-22 18:40:05,046 - os_ken.base.app_manager - INFO - loading app os_ken.controller.ofp_handler
 loading app os_ken.controller.ofp_handler
-instantiating app sdn_controller.py of SDNController
-SDN Controller initialized
+2025-10-22 18:40:05,048 - os_ken.base.app_manager - INFO - instantiating app /home/diluc/sdn-router/controller/sdn_controller_v2.py of SDNController
+instantiating app /home/diluc/sdn-router/controller/sdn_controller_v2.py of SDNController
+2025-10-22 18:40:05,049 - sdn_controller_v2 - INFO - ✅ SDN Controller initialized in PURE LLM MODE - No rule-based parsing
+✅ SDN Controller initialized in PURE LLM MODE - No rule-based parsing
+2025-10-22 18:40:05,049 - api_server_v3 - INFO - ✅ SDN Controller registered with API server
+✅ SDN Controller registered with API server
+2025-10-22 18:40:05,050 - sdn_controller_v2 - INFO - ✅ Controller registered with API server
+✅ Controller registered with API server
+2025-10-22 18:40:05,050 - os_ken.base.app_manager - INFO - instantiating app os_ken.controller.ofp_handler of OFPHandler
 instantiating app os_ken.controller.ofp_handler of OFPHandler
+2025-10-22 18:40:05,051 - os_ken.base.app_manager - DEBUG - BRICK SDNController
 BRICK SDNController
+2025-10-22 18:40:05,052 - os_ken.base.app_manager - DEBUG -   CONSUMES EventOFPFlowStatsReply
   CONSUMES EventOFPFlowStatsReply
+2025-10-22 18:40:05,052 - os_ken.base.app_manager - DEBUG -   CONSUMES EventOFPPacketIn
   CONSUMES EventOFPPacketIn
+2025-10-22 18:40:05,052 - os_ken.base.app_manager - DEBUG -   CONSUMES EventOFPPortStatsReply
+  CONSUMES EventOFPPortStatsReply
+2025-10-22 18:40:05,052 - os_ken.base.app_manager - DEBUG -   CONSUMES EventOFPSwitchFeatures
   CONSUMES EventOFPSwitchFeatures
+2025-10-22 18:40:05,053 - os_ken.base.app_manager - DEBUG - BRICK ofp_event
 BRICK ofp_event
+2025-10-22 18:40:05,053 - os_ken.base.app_manager - DEBUG -   PROVIDES EventOFPFlowStatsReply TO {'SDNController': {'main'}}
   PROVIDES EventOFPFlowStatsReply TO {'SDNController': {'main'}}
+2025-10-22 18:40:05,053 - os_ken.base.app_manager - DEBUG -   PROVIDES EventOFPPacketIn TO {'SDNController': {'main'}}
   PROVIDES EventOFPPacketIn TO {'SDNController': {'main'}}
+2025-10-22 18:40:05,053 - os_ken.base.app_manager - DEBUG -   PROVIDES EventOFPPortStatsReply TO {'SDNController': {'main'}}
+  PROVIDES EventOFPPortStatsReply TO {'SDNController': {'main'}}
+2025-10-22 18:40:05,054 - os_ken.base.app_manager - DEBUG -   PROVIDES EventOFPSwitchFeatures TO {'SDNController': {'config'}}
   PROVIDES EventOFPSwitchFeatures TO {'SDNController': {'config'}}
+2025-10-22 18:40:05,054 - os_ken.base.app_manager - DEBUG -   CONSUMES EventOFPEchoReply
   CONSUMES EventOFPEchoReply
+2025-10-22 18:40:05,054 - os_ken.base.app_manager - DEBUG -   CONSUMES EventOFPEchoRequest
   CONSUMES EventOFPEchoRequest
+2025-10-22 18:40:05,054 - os_ken.base.app_manager - DEBUG -   CONSUMES EventOFPErrorMsg
   CONSUMES EventOFPErrorMsg
+2025-10-22 18:40:05,054 - os_ken.base.app_manager - DEBUG -   CONSUMES EventOFPHello
   CONSUMES EventOFPHello
+2025-10-22 18:40:05,055 - os_ken.base.app_manager - DEBUG -   CONSUMES EventOFPPortDescStatsReply
   CONSUMES EventOFPPortDescStatsReply
+2025-10-22 18:40:05,055 - os_ken.base.app_manager - DEBUG -   CONSUMES EventOFPPortStatus
   CONSUMES EventOFPPortStatus
+2025-10-22 18:40:05,055 - os_ken.base.app_manager - DEBUG -   CONSUMES EventOFPSwitchFeatures
   CONSUMES EventOFPSwitchFeatures
-hub: uncaught exception: Traceback (most recent call last):
-  File "/home/diluc/sdn-router/venv/lib/python3.12/site-packages/os_ken/lib/hub.py", line 69, in _launch
-    return func(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/diluc/sdn-router/venv/lib/python3.12/site-packages/os_ken/controller/controller.py", line 153, in __call__
-    self.server_loop(self.ofp_tcp_listen_port,
-  File "/home/diluc/sdn-router/venv/lib/python3.12/site-packages/os_ken/controller/controller.py", line 193, in server_loop
-    server = StreamServer((CONF.ofp_listen_host,
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/diluc/sdn-router/venv/lib/python3.12/site-packages/os_ken/lib/hub.py", line 136, in __init__
-    self.server = eventlet.listen(listen_info)
-                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/diluc/sdn-router/venv/lib/python3.12/site-packages/eventlet/convenience.py", line 78, in listen
-    sock.bind(addr)
-OSError: [Errno 98] Address already in use
-
+2025-10-22 18:40:21,734 - api_server_v3 - INFO - 🌊 Returning flows data
+🌊 Returning flows data
+2025-10-22 18:40:21,814 - api_server_v3 - INFO - 🔌 Client connected: UXcD8ahOGy54sEhxAAAB
+🔌 Client connected: UXcD8ahOGy54sEhxAAAB
+2025-10-22 18:40:24,819 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 163.97 Mbps (cycle: 0.41)
+📊 Simulated throughput: 163.97 Mbps (cycle: 0.41)
+2025-10-22 18:40:24,819 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 163.97, 'latency': 14.06, 'activeFlows': 10, 'packetLoss': 0}
+📊 Stats: {'throughput': 163.97, 'latency': 14.06, 'activeFlows': 10, 'packetLoss': 0}
+2025-10-22 18:40:27,818 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 136.69 Mbps (cycle: 0.46)
+📊 Simulated throughput: 136.69 Mbps (cycle: 0.46)
+2025-10-22 18:40:27,819 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 136.69, 'latency': 11.76, 'activeFlows': 12, 'packetLoss': 0.0038}
+📊 Stats: {'throughput': 136.69, 'latency': 11.76, 'activeFlows': 12, 'packetLoss': 0.0038}
+2025-10-22 18:40:30,818 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 85.89 Mbps (cycle: 0.51)
+📊 Simulated throughput: 85.89 Mbps (cycle: 0.51)
+2025-10-22 18:40:30,818 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 85.89, 'latency': 6.91, 'activeFlows': 7, 'packetLoss': 0.0037}
+📊 Stats: {'throughput': 85.89, 'latency': 6.91, 'activeFlows': 7, 'packetLoss': 0.0037}
+2025-10-22 18:40:32,095 - api_server_v3 - INFO - 💬 Chat from user_tgv5bsm0e: hi
+💬 Chat from user_tgv5bsm0e: hi
+2025-10-22 18:40:32,096 - conversation_manager - INFO - 🤖 Sending to Groq with 2 messages
+🤖 Sending to Groq with 2 messages
+2025-10-22 18:40:32,100 - groq._base_client - DEBUG - Request options: {'method': 'post', 'url': '/openai/v1/chat/completions', 'files': None, 'json_data': {'messages': [{'role': 'system', 'content': 'You are an expert SDN (Software-Defined Networking) AI assistant. Your job is to translate natural language requests into network intents.\n\n🎯 CRITICAL: You MUST respond with valid JSON. There are TWO phases:\n\n**PHASE 1: PROPOSE (action: "propose")**\nWhen user makes a request, PROPOSE the configuration and ask for confirmation:\n{\n  "response": "I\'ll configure [what]. This will [impact]. Should I proceed? (Reply \'yes\' to confirm)",\n  "action": "propose",\n  "intent": {\n    "name": "Descriptive name",\n    "policy": "qos|security|gaming|bandwidth|routing|custom",\n    "priority": 50-95,\n    "protocol": "tcp|udp|both",\n    "action": "prioritize|limit|block|allow",\n    "bandwidth": "unlimited"\n  }\n}\n\n**PHASE 2: APPLY (action: "apply")**\nONLY after user confirms with "yes", "proceed", "apply", "do it", etc:\n{\n  "response": "Applied! [What was configured]",\n  "action": "apply",\n  "intent": {... same intent object ...}\n}\n\n**SPECIAL ACTIONS:**\nFor "remove all intents", "clear all", "reset":\n{\n  "response": "I\'ll remove all network intents and reset to default. Should I proceed?",\n  "action": "delete_all",\n  "needs_confirmation": true\n}\n\nWhen confirmed:\n{\n  "response": "All intents removed. Network reset to default configuration.",\n  "action": "delete_all_confirmed"\n}\n\nFor information/questions:\n{\n  "response": "Your helpful response",\n  "action": "info"\n}\n\nWhen need clarification:\n{\n  "response": "Your question",\n  "action": "clarify"\n}\n\n📋 POLICY TYPES:\n- "qos" → Video calls, streaming, VoIP\n- "security" → Firewall, blocking, filtering\n- "gaming" → Online gaming, low latency\n- "bandwidth" → Limiting, capping, throttling\n- "routing" → Path selection, load balancing\n- "custom" → Other\n\n🎚️ PRIORITY: 30-95 (higher = more important)\n\n🔧 PROTOCOL:\n- "udp" → Video, gaming, streaming\n- "tcp" → Web, files, databases\n- "both" → Security, general\n\n⚡ ACTION:\n- "prioritize" → Higher priority\n- "limit" → Cap bandwidth\n- "block" → Block traffic\n- "allow" → Allow traffic\n\n📝 EXAMPLES:\n\nUser: "Optimize for video calls"\n{\n  "response": "I\'ll configure a QoS policy to prioritize video call traffic (UDP). This ensures smooth video conferencing. Should I proceed? (Reply \'yes\' to confirm)",\n  "action": "propose",\n  "intent": {\n    "name": "Video Call Optimization",\n    "policy": "qos",\n    "priority": 85,\n    "protocol": "udp",\n    "action": "prioritize",\n    "bandwidth": "unlimited"\n  }\n}\n\nUser: "yes"\n{\n  "response": "Applied! Video calls are now prioritized with QoS policy at priority 85.",\n  "action": "apply",\n  "intent": {\n    "name": "Video Call Optimization",\n    "policy": "qos",\n    "priority": 85,\n    "protocol": "udp",\n    "action": "prioritize",\n    "bandwidth": "unlimited"\n  }\n}\n\nUser: "remove all intents"\n{\n  "response": "I\'ll remove all existing network intents and reset to default configuration. Should I proceed?",\n  "action": "delete_all",\n  "needs_confirmation": true\n}\n\nUser: "yes"\n{\n  "response": "All intents have been removed. Your network is now in its default state.",\n  "action": "delete_all_confirmed"\n}\n\n🔒 CRITICAL RULES:\n1. ALWAYS use "propose" first, NEVER "apply" immediately\n2. ONLY use "apply" after user confirms\n3. NEVER create intents for "remove/delete/clear" requests\n4. Always ask "Should I proceed?" for configuration changes\n5. Be conversational and explain impacts clearly\n\nRemember: Users must confirm BEFORE applying any changes!'}, {'role': 'user', 'content': 'hi'}], 'model': 'llama-3.3-70b-versatile', 'max_tokens': 1024, 'response_format': {'type': 'json_object'}, 'temperature': 0.7}}
+Request options: {'method': 'post', 'url': '/openai/v1/chat/completions', 'files': None, 'json_data': {'messages': [{'role': 'system', 'content': 'You are an expert SDN (Software-Defined Networking) AI assistant. Your job is to translate natural language requests into network intents.\n\n🎯 CRITICAL: You MUST respond with valid JSON. There are TWO phases:\n\n**PHASE 1: PROPOSE (action: "propose")**\nWhen user makes a request, PROPOSE the configuration and ask for confirmation:\n{\n  "response": "I\'ll configure [what]. This will [impact]. Should I proceed? (Reply \'yes\' to confirm)",\n  "action": "propose",\n  "intent": {\n    "name": "Descriptive name",\n    "policy": "qos|security|gaming|bandwidth|routing|custom",\n    "priority": 50-95,\n    "protocol": "tcp|udp|both",\n    "action": "prioritize|limit|block|allow",\n    "bandwidth": "unlimited"\n  }\n}\n\n**PHASE 2: APPLY (action: "apply")**\nONLY after user confirms with "yes", "proceed", "apply", "do it", etc:\n{\n  "response": "Applied! [What was configured]",\n  "action": "apply",\n  "intent": {... same intent object ...}\n}\n\n**SPECIAL ACTIONS:**\nFor "remove all intents", "clear all", "reset":\n{\n  "response": "I\'ll remove all network intents and reset to default. Should I proceed?",\n  "action": "delete_all",\n  "needs_confirmation": true\n}\n\nWhen confirmed:\n{\n  "response": "All intents removed. Network reset to default configuration.",\n  "action": "delete_all_confirmed"\n}\n\nFor information/questions:\n{\n  "response": "Your helpful response",\n  "action": "info"\n}\n\nWhen need clarification:\n{\n  "response": "Your question",\n  "action": "clarify"\n}\n\n📋 POLICY TYPES:\n- "qos" → Video calls, streaming, VoIP\n- "security" → Firewall, blocking, filtering\n- "gaming" → Online gaming, low latency\n- "bandwidth" → Limiting, capping, throttling\n- "routing" → Path selection, load balancing\n- "custom" → Other\n\n🎚️ PRIORITY: 30-95 (higher = more important)\n\n🔧 PROTOCOL:\n- "udp" → Video, gaming, streaming\n- "tcp" → Web, files, databases\n- "both" → Security, general\n\n⚡ ACTION:\n- "prioritize" → Higher priority\n- "limit" → Cap bandwidth\n- "block" → Block traffic\n- "allow" → Allow traffic\n\n📝 EXAMPLES:\n\nUser: "Optimize for video calls"\n{\n  "response": "I\'ll configure a QoS policy to prioritize video call traffic (UDP). This ensures smooth video conferencing. Should I proceed? (Reply \'yes\' to confirm)",\n  "action": "propose",\n  "intent": {\n    "name": "Video Call Optimization",\n    "policy": "qos",\n    "priority": 85,\n    "protocol": "udp",\n    "action": "prioritize",\n    "bandwidth": "unlimited"\n  }\n}\n\nUser: "yes"\n{\n  "response": "Applied! Video calls are now prioritized with QoS policy at priority 85.",\n  "action": "apply",\n  "intent": {\n    "name": "Video Call Optimization",\n    "policy": "qos",\n    "priority": 85,\n    "protocol": "udp",\n    "action": "prioritize",\n    "bandwidth": "unlimited"\n  }\n}\n\nUser: "remove all intents"\n{\n  "response": "I\'ll remove all existing network intents and reset to default configuration. Should I proceed?",\n  "action": "delete_all",\n  "needs_confirmation": true\n}\n\nUser: "yes"\n{\n  "response": "All intents have been removed. Your network is now in its default state.",\n  "action": "delete_all_confirmed"\n}\n\n🔒 CRITICAL RULES:\n1. ALWAYS use "propose" first, NEVER "apply" immediately\n2. ONLY use "apply" after user confirms\n3. NEVER create intents for "remove/delete/clear" requests\n4. Always ask "Should I proceed?" for configuration changes\n5. Be conversational and explain impacts clearly\n\nRemember: Users must confirm BEFORE applying any changes!'}, {'role': 'user', 'content': 'hi'}], 'model': 'llama-3.3-70b-versatile', 'max_tokens': 1024, 'response_format': {'type': 'json_object'}, 'temperature': 0.7}}
+2025-10-22 18:40:32,103 - groq._base_client - DEBUG - Sending HTTP Request: POST https://api.groq.com/openai/v1/chat/completions
+Sending HTTP Request: POST https://api.groq.com/openai/v1/chat/completions
+2025-10-22 18:40:32,104 - httpcore.connection - DEBUG - close.started
+close.started
+2025-10-22 18:40:32,105 - httpcore.connection - DEBUG - close.complete
+close.complete
+2025-10-22 18:40:32,105 - httpcore.connection - DEBUG - connect_tcp.started host='api.groq.com' port=443 local_address=None timeout=5.0 socket_options=None
+connect_tcp.started host='api.groq.com' port=443 local_address=None timeout=5.0 socket_options=None
+2025-10-22 18:40:32,235 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x7552b1f5b920>
+connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x7552b1f5b920>
+2025-10-22 18:40:32,236 - httpcore.connection - DEBUG - start_tls.started ssl_context=<eventlet.green.ssl.GreenSSLContext object at 0x7552b2aeb0d0> server_hostname='api.groq.com' timeout=5.0
+start_tls.started ssl_context=<eventlet.green.ssl.GreenSSLContext object at 0x7552b2aeb0d0> server_hostname='api.groq.com' timeout=5.0
+2025-10-22 18:40:32,283 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.sync.SyncStream object at 0x7552b1f84cb0>
+start_tls.complete return_value=<httpcore._backends.sync.SyncStream object at 0x7552b1f84cb0>
+2025-10-22 18:40:32,283 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+send_request_headers.started request=<Request [b'POST']>
+2025-10-22 18:40:32,284 - httpcore.http11 - DEBUG - send_request_headers.complete
+send_request_headers.complete
+2025-10-22 18:40:32,284 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+send_request_body.started request=<Request [b'POST']>
+2025-10-22 18:40:32,285 - httpcore.http11 - DEBUG - send_request_body.complete
+send_request_body.complete
+2025-10-22 18:40:32,285 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+receive_response_headers.started request=<Request [b'POST']>
+2025-10-22 18:40:32,646 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Wed, 22 Oct 2025 13:10:32 GMT'), (b'Content-Type', b'application/json'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Content-Encoding', b'gzip'), (b'Cache-Control', b'private, max-age=0, no-store, no-cache, must-revalidate'), (b'vary', b'Origin'), (b'x-groq-region', b'bom'), (b'x-ratelimit-limit-requests', b'1000'), (b'x-ratelimit-limit-tokens', b'12000'), (b'x-ratelimit-remaining-requests', b'997'), (b'x-ratelimit-remaining-tokens', b'11014'), (b'x-ratelimit-reset-requests', b'4m19.2s'), (b'x-ratelimit-reset-tokens', b'4.93s'), (b'x-request-id', b'req_01k860nsn1ffbs75sqbyp26yze'), (b'via', b'1.1 google'), (b'cf-cache-status', b'DYNAMIC'), (b'Server', b'cloudflare'), (b'CF-RAY', b'99293c440f06dcf0-MAA'), (b'alt-svc', b'h3=":443"; ma=86400')])
+receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Wed, 22 Oct 2025 13:10:32 GMT'), (b'Content-Type', b'application/json'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Content-Encoding', b'gzip'), (b'Cache-Control', b'private, max-age=0, no-store, no-cache, must-revalidate'), (b'vary', b'Origin'), (b'x-groq-region', b'bom'), (b'x-ratelimit-limit-requests', b'1000'), (b'x-ratelimit-limit-tokens', b'12000'), (b'x-ratelimit-remaining-requests', b'997'), (b'x-ratelimit-remaining-tokens', b'11014'), (b'x-ratelimit-reset-requests', b'4m19.2s'), (b'x-ratelimit-reset-tokens', b'4.93s'), (b'x-request-id', b'req_01k860nsn1ffbs75sqbyp26yze'), (b'via', b'1.1 google'), (b'cf-cache-status', b'DYNAMIC'), (b'Server', b'cloudflare'), (b'CF-RAY', b'99293c440f06dcf0-MAA'), (b'alt-svc', b'h3=":443"; ma=86400')])
+2025-10-22 18:40:32,647 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-10-22 18:40:32,648 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+receive_response_body.started request=<Request [b'POST']>
+2025-10-22 18:40:32,649 - httpcore.http11 - DEBUG - receive_response_body.complete
+receive_response_body.complete
+2025-10-22 18:40:32,650 - httpcore.http11 - DEBUG - response_closed.started
+response_closed.started
+2025-10-22 18:40:32,650 - httpcore.http11 - DEBUG - response_closed.complete
+response_closed.complete
+2025-10-22 18:40:32,651 - groq._base_client - DEBUG - HTTP Response: POST https://api.groq.com/openai/v1/chat/completions "200 OK" Headers({'date': 'Wed, 22 Oct 2025 13:10:32 GMT', 'content-type': 'application/json', 'transfer-encoding': 'chunked', 'connection': 'keep-alive', 'content-encoding': 'gzip', 'cache-control': 'private, max-age=0, no-store, no-cache, must-revalidate', 'vary': 'Origin', 'x-groq-region': 'bom', 'x-ratelimit-limit-requests': '1000', 'x-ratelimit-limit-tokens': '12000', 'x-ratelimit-remaining-requests': '997', 'x-ratelimit-remaining-tokens': '11014', 'x-ratelimit-reset-requests': '4m19.2s', 'x-ratelimit-reset-tokens': '4.93s', 'x-request-id': 'req_01k860nsn1ffbs75sqbyp26yze', 'via': '1.1 google', 'cf-cache-status': 'DYNAMIC', 'server': 'cloudflare', 'cf-ray': '99293c440f06dcf0-MAA', 'alt-svc': 'h3=":443"; ma=86400'})
+HTTP Response: POST https://api.groq.com/openai/v1/chat/completions "200 OK" Headers({'date': 'Wed, 22 Oct 2025 13:10:32 GMT', 'content-type': 'application/json', 'transfer-encoding': 'chunked', 'connection': 'keep-alive', 'content-encoding': 'gzip', 'cache-control': 'private, max-age=0, no-store, no-cache, must-revalidate', 'vary': 'Origin', 'x-groq-region': 'bom', 'x-ratelimit-limit-requests': '1000', 'x-ratelimit-limit-tokens': '12000', 'x-ratelimit-remaining-requests': '997', 'x-ratelimit-remaining-tokens': '11014', 'x-ratelimit-reset-requests': '4m19.2s', 'x-ratelimit-reset-tokens': '4.93s', 'x-request-id': 'req_01k860nsn1ffbs75sqbyp26yze', 'via': '1.1 google', 'cf-cache-status': 'DYNAMIC', 'server': 'cloudflare', 'cf-ray': '99293c440f06dcf0-MAA', 'alt-svc': 'h3=":443"; ma=86400'})
+2025-10-22 18:40:32,653 - conversation_manager - INFO - ✅ Received from Groq: {
+  "response": "Hello! How can I assist you with your network configuration today?",
+   "action": "info"
+}...
+✅ Received from Groq: {
+  "response": "Hello! How can I assist you with your network configuration today?",
+   "action": "info"
+}...
+2025-10-22 18:40:32,654 - conversation_manager - INFO - ✅ Parsed response - Action: info, Policy: N/A
+✅ Parsed response - Action: info, Policy: N/A
+2025-10-22 18:40:32,654 - api_server_v3 - INFO - 🤖 Raw response from LLM: {"response": "Hello! How can I assist you with your network configuration today?", "action": "info"}
+🤖 Raw response from LLM: {"response": "Hello! How can I assist you with your network configuration today?", "action": "info"}
+2025-10-22 18:40:32,654 - api_server_v3 - INFO - ✅ Parsed JSON response: {'response': 'Hello! How can I assist you with your network configuration today?', 'action': 'info'}
+✅ Parsed JSON response: {'response': 'Hello! How can I assist you with your network configuration today?', 'action': 'info'}
+2025-10-22 18:40:32,655 - api_server_v3 - INFO - 📤 Final response: {'response': 'Hello! How can I assist you with your network configuration today?', 'action': 'info'}
+📤 Final response: {'response': 'Hello! How can I assist you with your network configuration today?', 'action': 'info'}
+2025-10-22 18:40:32,664 - api_server_v3 - INFO - 💬 WebSocket chat message: {'action': 'info', 'response': 'Hello! How can I assist you with your network configuration today?'}
+💬 WebSocket chat message: {'action': 'info', 'response': 'Hello! How can I assist you with your network configuration today?'}
+2025-10-22 18:40:33,818 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 62.29 Mbps (cycle: 0.56)
+📊 Simulated throughput: 62.29 Mbps (cycle: 0.56)
+2025-10-22 18:40:33,818 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 62.29, 'latency': 9.14, 'activeFlows': 9, 'packetLoss': 0.0032}
+📊 Stats: {'throughput': 62.29, 'latency': 9.14, 'activeFlows': 9, 'packetLoss': 0.0032}
+2025-10-22 18:40:36,818 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 60.01 Mbps (cycle: 0.61)
+📊 Simulated throughput: 60.01 Mbps (cycle: 0.61)
+2025-10-22 18:40:36,827 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 60.01, 'latency': 6.95, 'activeFlows': 12, 'packetLoss': 0.001}
+📊 Stats: {'throughput': 60.01, 'latency': 6.95, 'activeFlows': 12, 'packetLoss': 0.001}
+2025-10-22 18:40:39,818 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 66.87 Mbps (cycle: 0.66)
+📊 Simulated throughput: 66.87 Mbps (cycle: 0.66)
+2025-10-22 18:40:39,818 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 66.87, 'latency': 6.68, 'activeFlows': 5, 'packetLoss': 0.0069}
+📊 Stats: {'throughput': 66.87, 'latency': 6.68, 'activeFlows': 5, 'packetLoss': 0.0069}
+2025-10-22 18:40:42,817 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 57.90 Mbps (cycle: 0.71)
+📊 Simulated throughput: 57.90 Mbps (cycle: 0.71)
+2025-10-22 18:40:42,817 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 57.9, 'latency': 6.72, 'activeFlows': 5, 'packetLoss': 0.0065}
+📊 Stats: {'throughput': 57.9, 'latency': 6.72, 'activeFlows': 5, 'packetLoss': 0.0065}
+2025-10-22 18:40:45,818 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 59.41 Mbps (cycle: 0.76)
+📊 Simulated throughput: 59.41 Mbps (cycle: 0.76)
+2025-10-22 18:40:45,819 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 59.41, 'latency': 7.97, 'activeFlows': 6, 'packetLoss': 0.0051}
+📊 Stats: {'throughput': 59.41, 'latency': 7.97, 'activeFlows': 6, 'packetLoss': 0.0051}
+2025-10-22 18:40:48,818 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 50.73 Mbps (cycle: 0.81)
+📊 Simulated throughput: 50.73 Mbps (cycle: 0.81)
+2025-10-22 18:40:48,818 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 50.73, 'latency': 8.98, 'activeFlows': 5, 'packetLoss': 0.0061}
+📊 Stats: {'throughput': 50.73, 'latency': 8.98, 'activeFlows': 5, 'packetLoss': 0.0061}
+2025-10-22 18:40:51,818 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 50.00 Mbps (cycle: 0.86)
+📊 Simulated throughput: 50.00 Mbps (cycle: 0.86)
+2025-10-22 18:40:51,819 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 50, 'latency': 9.15, 'activeFlows': 10, 'packetLoss': 0.0057}
+📊 Stats: {'throughput': 50, 'latency': 9.15, 'activeFlows': 10, 'packetLoss': 0.0057}
+2025-10-22 18:40:54,819 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 61.92 Mbps (cycle: 0.91)
+📊 Simulated throughput: 61.92 Mbps (cycle: 0.91)
+2025-10-22 18:40:54,820 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 61.92, 'latency': 9.53, 'activeFlows': 10, 'packetLoss': 0.007}
+📊 Stats: {'throughput': 61.92, 'latency': 9.53, 'activeFlows': 10, 'packetLoss': 0.007}
+2025-10-22 18:40:55,379 - api_server_v3 - INFO - 💬 Chat from user_tgv5bsm0e: block port 27015
+💬 Chat from user_tgv5bsm0e: block port 27015
+2025-10-22 18:40:55,380 - conversation_manager - INFO - 🤖 Sending to Groq with 4 messages
+🤖 Sending to Groq with 4 messages
+2025-10-22 18:40:55,386 - groq._base_client - DEBUG - Request options: {'method': 'post', 'url': '/openai/v1/chat/completions', 'files': None, 'json_data': {'messages': [{'role': 'system', 'content': 'You are an expert SDN (Software-Defined Networking) AI assistant. Your job is to translate natural language requests into network intents.\n\n🎯 CRITICAL: You MUST respond with valid JSON. There are TWO phases:\n\n**PHASE 1: PROPOSE (action: "propose")**\nWhen user makes a request, PROPOSE the configuration and ask for confirmation:\n{\n  "response": "I\'ll configure [what]. This will [impact]. Should I proceed? (Reply \'yes\' to confirm)",\n  "action": "propose",\n  "intent": {\n    "name": "Descriptive name",\n    "policy": "qos|security|gaming|bandwidth|routing|custom",\n    "priority": 50-95,\n    "protocol": "tcp|udp|both",\n    "action": "prioritize|limit|block|allow",\n    "bandwidth": "unlimited"\n  }\n}\n\n**PHASE 2: APPLY (action: "apply")**\nONLY after user confirms with "yes", "proceed", "apply", "do it", etc:\n{\n  "response": "Applied! [What was configured]",\n  "action": "apply",\n  "intent": {... same intent object ...}\n}\n\n**SPECIAL ACTIONS:**\nFor "remove all intents", "clear all", "reset":\n{\n  "response": "I\'ll remove all network intents and reset to default. Should I proceed?",\n  "action": "delete_all",\n  "needs_confirmation": true\n}\n\nWhen confirmed:\n{\n  "response": "All intents removed. Network reset to default configuration.",\n  "action": "delete_all_confirmed"\n}\n\nFor information/questions:\n{\n  "response": "Your helpful response",\n  "action": "info"\n}\n\nWhen need clarification:\n{\n  "response": "Your question",\n  "action": "clarify"\n}\n\n📋 POLICY TYPES:\n- "qos" → Video calls, streaming, VoIP\n- "security" → Firewall, blocking, filtering\n- "gaming" → Online gaming, low latency\n- "bandwidth" → Limiting, capping, throttling\n- "routing" → Path selection, load balancing\n- "custom" → Other\n\n🎚️ PRIORITY: 30-95 (higher = more important)\n\n🔧 PROTOCOL:\n- "udp" → Video, gaming, streaming\n- "tcp" → Web, files, databases\n- "both" → Security, general\n\n⚡ ACTION:\n- "prioritize" → Higher priority\n- "limit" → Cap bandwidth\n- "block" → Block traffic\n- "allow" → Allow traffic\n\n📝 EXAMPLES:\n\nUser: "Optimize for video calls"\n{\n  "response": "I\'ll configure a QoS policy to prioritize video call traffic (UDP). This ensures smooth video conferencing. Should I proceed? (Reply \'yes\' to confirm)",\n  "action": "propose",\n  "intent": {\n    "name": "Video Call Optimization",\n    "policy": "qos",\n    "priority": 85,\n    "protocol": "udp",\n    "action": "prioritize",\n    "bandwidth": "unlimited"\n  }\n}\n\nUser: "yes"\n{\n  "response": "Applied! Video calls are now prioritized with QoS policy at priority 85.",\n  "action": "apply",\n  "intent": {\n    "name": "Video Call Optimization",\n    "policy": "qos",\n    "priority": 85,\n    "protocol": "udp",\n    "action": "prioritize",\n    "bandwidth": "unlimited"\n  }\n}\n\nUser: "remove all intents"\n{\n  "response": "I\'ll remove all existing network intents and reset to default configuration. Should I proceed?",\n  "action": "delete_all",\n  "needs_confirmation": true\n}\n\nUser: "yes"\n{\n  "response": "All intents have been removed. Your network is now in its default state.",\n  "action": "delete_all_confirmed"\n}\n\n🔒 CRITICAL RULES:\n1. ALWAYS use "propose" first, NEVER "apply" immediately\n2. ONLY use "apply" after user confirms\n3. NEVER create intents for "remove/delete/clear" requests\n4. Always ask "Should I proceed?" for configuration changes\n5. Be conversational and explain impacts clearly\n\nRemember: Users must confirm BEFORE applying any changes!'}, {'role': 'user', 'content': 'hi'}, {'role': 'assistant', 'content': 'Hello! How can I assist you with your network configuration today?'}, {'role': 'user', 'content': 'block port 27015'}], 'model': 'llama-3.3-70b-versatile', 'max_tokens': 1024, 'response_format': {'type': 'json_object'}, 'temperature': 0.7}}
+Request options: {'method': 'post', 'url': '/openai/v1/chat/completions', 'files': None, 'json_data': {'messages': [{'role': 'system', 'content': 'You are an expert SDN (Software-Defined Networking) AI assistant. Your job is to translate natural language requests into network intents.\n\n🎯 CRITICAL: You MUST respond with valid JSON. There are TWO phases:\n\n**PHASE 1: PROPOSE (action: "propose")**\nWhen user makes a request, PROPOSE the configuration and ask for confirmation:\n{\n  "response": "I\'ll configure [what]. This will [impact]. Should I proceed? (Reply \'yes\' to confirm)",\n  "action": "propose",\n  "intent": {\n    "name": "Descriptive name",\n    "policy": "qos|security|gaming|bandwidth|routing|custom",\n    "priority": 50-95,\n    "protocol": "tcp|udp|both",\n    "action": "prioritize|limit|block|allow",\n    "bandwidth": "unlimited"\n  }\n}\n\n**PHASE 2: APPLY (action: "apply")**\nONLY after user confirms with "yes", "proceed", "apply", "do it", etc:\n{\n  "response": "Applied! [What was configured]",\n  "action": "apply",\n  "intent": {... same intent object ...}\n}\n\n**SPECIAL ACTIONS:**\nFor "remove all intents", "clear all", "reset":\n{\n  "response": "I\'ll remove all network intents and reset to default. Should I proceed?",\n  "action": "delete_all",\n  "needs_confirmation": true\n}\n\nWhen confirmed:\n{\n  "response": "All intents removed. Network reset to default configuration.",\n  "action": "delete_all_confirmed"\n}\n\nFor information/questions:\n{\n  "response": "Your helpful response",\n  "action": "info"\n}\n\nWhen need clarification:\n{\n  "response": "Your question",\n  "action": "clarify"\n}\n\n📋 POLICY TYPES:\n- "qos" → Video calls, streaming, VoIP\n- "security" → Firewall, blocking, filtering\n- "gaming" → Online gaming, low latency\n- "bandwidth" → Limiting, capping, throttling\n- "routing" → Path selection, load balancing\n- "custom" → Other\n\n🎚️ PRIORITY: 30-95 (higher = more important)\n\n🔧 PROTOCOL:\n- "udp" → Video, gaming, streaming\n- "tcp" → Web, files, databases\n- "both" → Security, general\n\n⚡ ACTION:\n- "prioritize" → Higher priority\n- "limit" → Cap bandwidth\n- "block" → Block traffic\n- "allow" → Allow traffic\n\n📝 EXAMPLES:\n\nUser: "Optimize for video calls"\n{\n  "response": "I\'ll configure a QoS policy to prioritize video call traffic (UDP). This ensures smooth video conferencing. Should I proceed? (Reply \'yes\' to confirm)",\n  "action": "propose",\n  "intent": {\n    "name": "Video Call Optimization",\n    "policy": "qos",\n    "priority": 85,\n    "protocol": "udp",\n    "action": "prioritize",\n    "bandwidth": "unlimited"\n  }\n}\n\nUser: "yes"\n{\n  "response": "Applied! Video calls are now prioritized with QoS policy at priority 85.",\n  "action": "apply",\n  "intent": {\n    "name": "Video Call Optimization",\n    "policy": "qos",\n    "priority": 85,\n    "protocol": "udp",\n    "action": "prioritize",\n    "bandwidth": "unlimited"\n  }\n}\n\nUser: "remove all intents"\n{\n  "response": "I\'ll remove all existing network intents and reset to default configuration. Should I proceed?",\n  "action": "delete_all",\n  "needs_confirmation": true\n}\n\nUser: "yes"\n{\n  "response": "All intents have been removed. Your network is now in its default state.",\n  "action": "delete_all_confirmed"\n}\n\n🔒 CRITICAL RULES:\n1. ALWAYS use "propose" first, NEVER "apply" immediately\n2. ONLY use "apply" after user confirms\n3. NEVER create intents for "remove/delete/clear" requests\n4. Always ask "Should I proceed?" for configuration changes\n5. Be conversational and explain impacts clearly\n\nRemember: Users must confirm BEFORE applying any changes!'}, {'role': 'user', 'content': 'hi'}, {'role': 'assistant', 'content': 'Hello! How can I assist you with your network configuration today?'}, {'role': 'user', 'content': 'block port 27015'}], 'model': 'llama-3.3-70b-versatile', 'max_tokens': 1024, 'response_format': {'type': 'json_object'}, 'temperature': 0.7}}
+2025-10-22 18:40:55,389 - groq._base_client - DEBUG - Sending HTTP Request: POST https://api.groq.com/openai/v1/chat/completions
+Sending HTTP Request: POST https://api.groq.com/openai/v1/chat/completions
+2025-10-22 18:40:55,390 - httpcore.connection - DEBUG - close.started
+close.started
+2025-10-22 18:40:55,390 - httpcore.connection - DEBUG - close.complete
+close.complete
+2025-10-22 18:40:55,391 - httpcore.connection - DEBUG - connect_tcp.started host='api.groq.com' port=443 local_address=None timeout=5.0 socket_options=None
+connect_tcp.started host='api.groq.com' port=443 local_address=None timeout=5.0 socket_options=None
+2025-10-22 18:40:55,438 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x7552b432de80>
+connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x7552b432de80>
+2025-10-22 18:40:55,439 - httpcore.connection - DEBUG - start_tls.started ssl_context=<eventlet.green.ssl.GreenSSLContext object at 0x7552b2aeb0d0> server_hostname='api.groq.com' timeout=5.0
+start_tls.started ssl_context=<eventlet.green.ssl.GreenSSLContext object at 0x7552b2aeb0d0> server_hostname='api.groq.com' timeout=5.0
+2025-10-22 18:40:55,492 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.sync.SyncStream object at 0x7552b1f86480>
+start_tls.complete return_value=<httpcore._backends.sync.SyncStream object at 0x7552b1f86480>
+2025-10-22 18:40:55,493 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+send_request_headers.started request=<Request [b'POST']>
+2025-10-22 18:40:55,494 - httpcore.http11 - DEBUG - send_request_headers.complete
+send_request_headers.complete
+2025-10-22 18:40:55,495 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+send_request_body.started request=<Request [b'POST']>
+2025-10-22 18:40:55,495 - httpcore.http11 - DEBUG - send_request_body.complete
+send_request_body.complete
+2025-10-22 18:40:55,495 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+receive_response_headers.started request=<Request [b'POST']>
+2025-10-22 18:40:56,008 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Wed, 22 Oct 2025 13:10:56 GMT'), (b'Content-Type', b'application/json'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Content-Encoding', b'gzip'), (b'Cache-Control', b'private, max-age=0, no-store, no-cache, must-revalidate'), (b'vary', b'Origin'), (b'x-groq-region', b'bom'), (b'x-ratelimit-limit-requests', b'1000'), (b'x-ratelimit-limit-tokens', b'12000'), (b'x-ratelimit-remaining-requests', b'996'), (b'x-ratelimit-remaining-tokens', b'10986'), (b'x-ratelimit-reset-requests', b'5m45.6s'), (b'x-ratelimit-reset-tokens', b'5.07s'), (b'x-request-id', b'req_01k860pgbfewaat4t1k00nby22'), (b'via', b'1.1 google'), (b'cf-cache-status', b'DYNAMIC'), (b'Server', b'cloudflare'), (b'CF-RAY', b'99293cd5081b7f85-MAA'), (b'alt-svc', b'h3=":443"; ma=86400')])
+receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Wed, 22 Oct 2025 13:10:56 GMT'), (b'Content-Type', b'application/json'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Content-Encoding', b'gzip'), (b'Cache-Control', b'private, max-age=0, no-store, no-cache, must-revalidate'), (b'vary', b'Origin'), (b'x-groq-region', b'bom'), (b'x-ratelimit-limit-requests', b'1000'), (b'x-ratelimit-limit-tokens', b'12000'), (b'x-ratelimit-remaining-requests', b'996'), (b'x-ratelimit-remaining-tokens', b'10986'), (b'x-ratelimit-reset-requests', b'5m45.6s'), (b'x-ratelimit-reset-tokens', b'5.07s'), (b'x-request-id', b'req_01k860pgbfewaat4t1k00nby22'), (b'via', b'1.1 google'), (b'cf-cache-status', b'DYNAMIC'), (b'Server', b'cloudflare'), (b'CF-RAY', b'99293cd5081b7f85-MAA'), (b'alt-svc', b'h3=":443"; ma=86400')])
+2025-10-22 18:40:56,009 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-10-22 18:40:56,010 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+receive_response_body.started request=<Request [b'POST']>
+2025-10-22 18:40:56,010 - httpcore.http11 - DEBUG - receive_response_body.complete
+receive_response_body.complete
+2025-10-22 18:40:56,011 - httpcore.http11 - DEBUG - response_closed.started
+response_closed.started
+2025-10-22 18:40:56,011 - httpcore.http11 - DEBUG - response_closed.complete
+response_closed.complete
+2025-10-22 18:40:56,011 - groq._base_client - DEBUG - HTTP Response: POST https://api.groq.com/openai/v1/chat/completions "200 OK" Headers({'date': 'Wed, 22 Oct 2025 13:10:56 GMT', 'content-type': 'application/json', 'transfer-encoding': 'chunked', 'connection': 'keep-alive', 'content-encoding': 'gzip', 'cache-control': 'private, max-age=0, no-store, no-cache, must-revalidate', 'vary': 'Origin', 'x-groq-region': 'bom', 'x-ratelimit-limit-requests': '1000', 'x-ratelimit-limit-tokens': '12000', 'x-ratelimit-remaining-requests': '996', 'x-ratelimit-remaining-tokens': '10986', 'x-ratelimit-reset-requests': '5m45.6s', 'x-ratelimit-reset-tokens': '5.07s', 'x-request-id': 'req_01k860pgbfewaat4t1k00nby22', 'via': '1.1 google', 'cf-cache-status': 'DYNAMIC', 'server': 'cloudflare', 'cf-ray': '99293cd5081b7f85-MAA', 'alt-svc': 'h3=":443"; ma=86400'})
+HTTP Response: POST https://api.groq.com/openai/v1/chat/completions "200 OK" Headers({'date': 'Wed, 22 Oct 2025 13:10:56 GMT', 'content-type': 'application/json', 'transfer-encoding': 'chunked', 'connection': 'keep-alive', 'content-encoding': 'gzip', 'cache-control': 'private, max-age=0, no-store, no-cache, must-revalidate', 'vary': 'Origin', 'x-groq-region': 'bom', 'x-ratelimit-limit-requests': '1000', 'x-ratelimit-limit-tokens': '12000', 'x-ratelimit-remaining-requests': '996', 'x-ratelimit-remaining-tokens': '10986', 'x-ratelimit-reset-requests': '5m45.6s', 'x-ratelimit-reset-tokens': '5.07s', 'x-request-id': 'req_01k860pgbfewaat4t1k00nby22', 'via': '1.1 google', 'cf-cache-status': 'DYNAMIC', 'server': 'cloudflare', 'cf-ray': '99293cd5081b7f85-MAA', 'alt-svc': 'h3=":443"; ma=86400'})
+2025-10-22 18:40:56,012 - conversation_manager - INFO - ✅ Received from Groq: {
+  "response": "I'll configure a security policy to block incoming and outgoing traffic on port 27015. This will prevent any applications from using ...
+✅ Received from Groq: {
+  "response": "I'll configure a security policy to block incoming and outgoing traffic on port 27015. This will prevent any applications from using ...
+2025-10-22 18:40:56,013 - conversation_manager - INFO - ✅ Parsed response - Action: propose, Policy: security
+✅ Parsed response - Action: propose, Policy: security
+2025-10-22 18:40:56,013 - api_server_v3 - INFO - 🤖 Raw response from LLM: {"response": "I'll configure a security policy to block incoming and outgoing traffic on port 27015. This will prevent any applications from using this port. Should I proceed? (Reply 'yes' to confirm)", "action": "propose", "intent": {"name": "Block Port 27015", "policy": "security", "priority": 80, "protocol": "both", "action": "block", "bandwidth": "unlimited"}}
+🤖 Raw response from LLM: {"response": "I'll configure a security policy to block incoming and outgoing traffic on port 27015. This will prevent any applications from using this port. Should I proceed? (Reply 'yes' to confirm)", "action": "propose", "intent": {"name": "Block Port 27015", "policy": "security", "priority": 80, "protocol": "both", "action": "block", "bandwidth": "unlimited"}}
+2025-10-22 18:40:56,014 - api_server_v3 - INFO - ✅ Parsed JSON response: {'response': "I'll configure a security policy to block incoming and outgoing traffic on port 27015. This will prevent any applications from using this port. Should I proceed? (Reply 'yes' to confirm)", 'action': 'propose', 'intent': {'name': 'Block Port 27015', 'policy': 'security', 'priority': 80, 'protocol': 'both', 'action': 'block', 'bandwidth': 'unlimited'}}
+✅ Parsed JSON response: {'response': "I'll configure a security policy to block incoming and outgoing traffic on port 27015. This will prevent any applications from using this port. Should I proceed? (Reply 'yes' to confirm)", 'action': 'propose', 'intent': {'name': 'Block Port 27015', 'policy': 'security', 'priority': 80, 'protocol': 'both', 'action': 'block', 'bandwidth': 'unlimited'}}
+2025-10-22 18:40:56,014 - api_server_v3 - INFO - 📤 Final response: {'response': "I'll configure a security policy to block incoming and outgoing traffic on port 27015. This will prevent any applications from using this port. Should I proceed? (Reply 'yes' to confirm)", 'action': 'propose', 'intent': {'name': 'Block Port 27015', 'policy': 'security', 'priority': 80, 'protocol': 'both', 'action': 'block', 'bandwidth': 'unlimited'}}
+📤 Final response: {'response': "I'll configure a security policy to block incoming and outgoing traffic on port 27015. This will prevent any applications from using this port. Should I proceed? (Reply 'yes' to confirm)", 'action': 'propose', 'intent': {'name': 'Block Port 27015', 'policy': 'security', 'priority': 80, 'protocol': 'both', 'action': 'block', 'bandwidth': 'unlimited'}}
+2025-10-22 18:40:56,024 - api_server_v3 - INFO - 💬 WebSocket chat message: {'action': 'propose', 'intent': {'action': 'block', 'bandwidth': 'unlimited', 'name': 'Block Port 27015', 'policy': 'security', 'priority': 80, 'protocol': 'both'}, 'response': "I'll configure a security policy to block incoming and outgoing traffic on port 27015. This will prevent any applications from using this port. Should I proceed? (Reply 'yes' to confirm)"}
+💬 WebSocket chat message: {'action': 'propose', 'intent': {'action': 'block', 'bandwidth': 'unlimited', 'name': 'Block Port 27015', 'policy': 'security', 'priority': 80, 'protocol': 'both'}, 'response': "I'll configure a security policy to block incoming and outgoing traffic on port 27015. This will prevent any applications from using this port. Should I proceed? (Reply 'yes' to confirm)"}
+2025-10-22 18:40:57,818 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 61.73 Mbps (cycle: 0.96)
+📊 Simulated throughput: 61.73 Mbps (cycle: 0.96)
+2025-10-22 18:40:57,819 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 61.73, 'latency': 8.86, 'activeFlows': 12, 'packetLoss': 0.0101}
+📊 Stats: {'throughput': 61.73, 'latency': 8.86, 'activeFlows': 12, 'packetLoss': 0.0101}
+2025-10-22 18:41:00,818 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 106.87 Mbps (cycle: 0.01)
+📊 Simulated throughput: 106.87 Mbps (cycle: 0.01)
+2025-10-22 18:41:00,818 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 106.87, 'latency': 8.43, 'activeFlows': 6, 'packetLoss': 0.006}
+📊 Stats: {'throughput': 106.87, 'latency': 8.43, 'activeFlows': 6, 'packetLoss': 0.006}
+2025-10-22 18:41:01,494 - api_server_v3 - INFO - 💬 Chat from user_tgv5bsm0e: yes
+💬 Chat from user_tgv5bsm0e: yes
+2025-10-22 18:41:01,504 - conversation_manager - INFO - 🤖 Sending to Groq with 6 messages
+🤖 Sending to Groq with 6 messages
+2025-10-22 18:41:01,512 - groq._base_client - DEBUG - Request options: {'method': 'post', 'url': '/openai/v1/chat/completions', 'files': None, 'json_data': {'messages': [{'role': 'system', 'content': 'You are an expert SDN (Software-Defined Networking) AI assistant. Your job is to translate natural language requests into network intents.\n\n🎯 CRITICAL: You MUST respond with valid JSON. There are TWO phases:\n\n**PHASE 1: PROPOSE (action: "propose")**\nWhen user makes a request, PROPOSE the configuration and ask for confirmation:\n{\n  "response": "I\'ll configure [what]. This will [impact]. Should I proceed? (Reply \'yes\' to confirm)",\n  "action": "propose",\n  "intent": {\n    "name": "Descriptive name",\n    "policy": "qos|security|gaming|bandwidth|routing|custom",\n    "priority": 50-95,\n    "protocol": "tcp|udp|both",\n    "action": "prioritize|limit|block|allow",\n    "bandwidth": "unlimited"\n  }\n}\n\n**PHASE 2: APPLY (action: "apply")**\nONLY after user confirms with "yes", "proceed", "apply", "do it", etc:\n{\n  "response": "Applied! [What was configured]",\n  "action": "apply",\n  "intent": {... same intent object ...}\n}\n\n**SPECIAL ACTIONS:**\nFor "remove all intents", "clear all", "reset":\n{\n  "response": "I\'ll remove all network intents and reset to default. Should I proceed?",\n  "action": "delete_all",\n  "needs_confirmation": true\n}\n\nWhen confirmed:\n{\n  "response": "All intents removed. Network reset to default configuration.",\n  "action": "delete_all_confirmed"\n}\n\nFor information/questions:\n{\n  "response": "Your helpful response",\n  "action": "info"\n}\n\nWhen need clarification:\n{\n  "response": "Your question",\n  "action": "clarify"\n}\n\n📋 POLICY TYPES:\n- "qos" → Video calls, streaming, VoIP\n- "security" → Firewall, blocking, filtering\n- "gaming" → Online gaming, low latency\n- "bandwidth" → Limiting, capping, throttling\n- "routing" → Path selection, load balancing\n- "custom" → Other\n\n🎚️ PRIORITY: 30-95 (higher = more important)\n\n🔧 PROTOCOL:\n- "udp" → Video, gaming, streaming\n- "tcp" → Web, files, databases\n- "both" → Security, general\n\n⚡ ACTION:\n- "prioritize" → Higher priority\n- "limit" → Cap bandwidth\n- "block" → Block traffic\n- "allow" → Allow traffic\n\n📝 EXAMPLES:\n\nUser: "Optimize for video calls"\n{\n  "response": "I\'ll configure a QoS policy to prioritize video call traffic (UDP). This ensures smooth video conferencing. Should I proceed? (Reply \'yes\' to confirm)",\n  "action": "propose",\n  "intent": {\n    "name": "Video Call Optimization",\n    "policy": "qos",\n    "priority": 85,\n    "protocol": "udp",\n    "action": "prioritize",\n    "bandwidth": "unlimited"\n  }\n}\n\nUser: "yes"\n{\n  "response": "Applied! Video calls are now prioritized with QoS policy at priority 85.",\n  "action": "apply",\n  "intent": {\n    "name": "Video Call Optimization",\n    "policy": "qos",\n    "priority": 85,\n    "protocol": "udp",\n    "action": "prioritize",\n    "bandwidth": "unlimited"\n  }\n}\n\nUser: "remove all intents"\n{\n  "response": "I\'ll remove all existing network intents and reset to default configuration. Should I proceed?",\n  "action": "delete_all",\n  "needs_confirmation": true\n}\n\nUser: "yes"\n{\n  "response": "All intents have been removed. Your network is now in its default state.",\n  "action": "delete_all_confirmed"\n}\n\n🔒 CRITICAL RULES:\n1. ALWAYS use "propose" first, NEVER "apply" immediately\n2. ONLY use "apply" after user confirms\n3. NEVER create intents for "remove/delete/clear" requests\n4. Always ask "Should I proceed?" for configuration changes\n5. Be conversational and explain impacts clearly\n\nRemember: Users must confirm BEFORE applying any changes!'}, {'role': 'user', 'content': 'hi'}, {'role': 'assistant', 'content': 'Hello! How can I assist you with your network configuration today?'}, {'role': 'user', 'content': 'block port 27015'}, {'role': 'assistant', 'content': "I'll configure a security policy to block incoming and outgoing traffic on port 27015. This will prevent any applications from using this port. Should I proceed? (Reply 'yes' to confirm)"}, {'role': 'user', 'content': 'yes'}], 'model': 'llama-3.3-70b-versatile', 'max_tokens': 1024, 'response_format': {'type': 'json_object'}, 'temperature': 0.7}}
+Request options: {'method': 'post', 'url': '/openai/v1/chat/completions', 'files': None, 'json_data': {'messages': [{'role': 'system', 'content': 'You are an expert SDN (Software-Defined Networking) AI assistant. Your job is to translate natural language requests into network intents.\n\n🎯 CRITICAL: You MUST respond with valid JSON. There are TWO phases:\n\n**PHASE 1: PROPOSE (action: "propose")**\nWhen user makes a request, PROPOSE the configuration and ask for confirmation:\n{\n  "response": "I\'ll configure [what]. This will [impact]. Should I proceed? (Reply \'yes\' to confirm)",\n  "action": "propose",\n  "intent": {\n    "name": "Descriptive name",\n    "policy": "qos|security|gaming|bandwidth|routing|custom",\n    "priority": 50-95,\n    "protocol": "tcp|udp|both",\n    "action": "prioritize|limit|block|allow",\n    "bandwidth": "unlimited"\n  }\n}\n\n**PHASE 2: APPLY (action: "apply")**\nONLY after user confirms with "yes", "proceed", "apply", "do it", etc:\n{\n  "response": "Applied! [What was configured]",\n  "action": "apply",\n  "intent": {... same intent object ...}\n}\n\n**SPECIAL ACTIONS:**\nFor "remove all intents", "clear all", "reset":\n{\n  "response": "I\'ll remove all network intents and reset to default. Should I proceed?",\n  "action": "delete_all",\n  "needs_confirmation": true\n}\n\nWhen confirmed:\n{\n  "response": "All intents removed. Network reset to default configuration.",\n  "action": "delete_all_confirmed"\n}\n\nFor information/questions:\n{\n  "response": "Your helpful response",\n  "action": "info"\n}\n\nWhen need clarification:\n{\n  "response": "Your question",\n  "action": "clarify"\n}\n\n📋 POLICY TYPES:\n- "qos" → Video calls, streaming, VoIP\n- "security" → Firewall, blocking, filtering\n- "gaming" → Online gaming, low latency\n- "bandwidth" → Limiting, capping, throttling\n- "routing" → Path selection, load balancing\n- "custom" → Other\n\n🎚️ PRIORITY: 30-95 (higher = more important)\n\n🔧 PROTOCOL:\n- "udp" → Video, gaming, streaming\n- "tcp" → Web, files, databases\n- "both" → Security, general\n\n⚡ ACTION:\n- "prioritize" → Higher priority\n- "limit" → Cap bandwidth\n- "block" → Block traffic\n- "allow" → Allow traffic\n\n📝 EXAMPLES:\n\nUser: "Optimize for video calls"\n{\n  "response": "I\'ll configure a QoS policy to prioritize video call traffic (UDP). This ensures smooth video conferencing. Should I proceed? (Reply \'yes\' to confirm)",\n  "action": "propose",\n  "intent": {\n    "name": "Video Call Optimization",\n    "policy": "qos",\n    "priority": 85,\n    "protocol": "udp",\n    "action": "prioritize",\n    "bandwidth": "unlimited"\n  }\n}\n\nUser: "yes"\n{\n  "response": "Applied! Video calls are now prioritized with QoS policy at priority 85.",\n  "action": "apply",\n  "intent": {\n    "name": "Video Call Optimization",\n    "policy": "qos",\n    "priority": 85,\n    "protocol": "udp",\n    "action": "prioritize",\n    "bandwidth": "unlimited"\n  }\n}\n\nUser: "remove all intents"\n{\n  "response": "I\'ll remove all existing network intents and reset to default configuration. Should I proceed?",\n  "action": "delete_all",\n  "needs_confirmation": true\n}\n\nUser: "yes"\n{\n  "response": "All intents have been removed. Your network is now in its default state.",\n  "action": "delete_all_confirmed"\n}\n\n🔒 CRITICAL RULES:\n1. ALWAYS use "propose" first, NEVER "apply" immediately\n2. ONLY use "apply" after user confirms\n3. NEVER create intents for "remove/delete/clear" requests\n4. Always ask "Should I proceed?" for configuration changes\n5. Be conversational and explain impacts clearly\n\nRemember: Users must confirm BEFORE applying any changes!'}, {'role': 'user', 'content': 'hi'}, {'role': 'assistant', 'content': 'Hello! How can I assist you with your network configuration today?'}, {'role': 'user', 'content': 'block port 27015'}, {'role': 'assistant', 'content': "I'll configure a security policy to block incoming and outgoing traffic on port 27015. This will prevent any applications from using this port. Should I proceed? (Reply 'yes' to confirm)"}, {'role': 'user', 'content': 'yes'}], 'model': 'llama-3.3-70b-versatile', 'max_tokens': 1024, 'response_format': {'type': 'json_object'}, 'temperature': 0.7}}
+2025-10-22 18:41:01,515 - groq._base_client - DEBUG - Sending HTTP Request: POST https://api.groq.com/openai/v1/chat/completions
+Sending HTTP Request: POST https://api.groq.com/openai/v1/chat/completions
+2025-10-22 18:41:01,516 - httpcore.connection - DEBUG - close.started
+close.started
+2025-10-22 18:41:01,517 - httpcore.connection - DEBUG - close.complete
+close.complete
+2025-10-22 18:41:01,517 - httpcore.connection - DEBUG - connect_tcp.started host='api.groq.com' port=443 local_address=None timeout=5.0 socket_options=None
+connect_tcp.started host='api.groq.com' port=443 local_address=None timeout=5.0 socket_options=None
+2025-10-22 18:41:01,675 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x7552b1f47050>
+connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x7552b1f47050>
+2025-10-22 18:41:01,676 - httpcore.connection - DEBUG - start_tls.started ssl_context=<eventlet.green.ssl.GreenSSLContext object at 0x7552b2aeb0d0> server_hostname='api.groq.com' timeout=5.0
+start_tls.started ssl_context=<eventlet.green.ssl.GreenSSLContext object at 0x7552b2aeb0d0> server_hostname='api.groq.com' timeout=5.0
+2025-10-22 18:41:01,724 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.sync.SyncStream object at 0x7552b1f88680>
+start_tls.complete return_value=<httpcore._backends.sync.SyncStream object at 0x7552b1f88680>
+2025-10-22 18:41:01,724 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+send_request_headers.started request=<Request [b'POST']>
+2025-10-22 18:41:01,725 - httpcore.http11 - DEBUG - send_request_headers.complete
+send_request_headers.complete
+2025-10-22 18:41:01,725 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+send_request_body.started request=<Request [b'POST']>
+2025-10-22 18:41:01,725 - httpcore.http11 - DEBUG - send_request_body.complete
+send_request_body.complete
+2025-10-22 18:41:01,726 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+receive_response_headers.started request=<Request [b'POST']>
+2025-10-22 18:41:02,241 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Wed, 22 Oct 2025 13:11:02 GMT'), (b'Content-Type', b'application/json'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Content-Encoding', b'gzip'), (b'Cache-Control', b'private, max-age=0, no-store, no-cache, must-revalidate'), (b'vary', b'Origin'), (b'x-groq-region', b'bom'), (b'x-ratelimit-limit-requests', b'1000'), (b'x-ratelimit-limit-tokens', b'12000'), (b'x-ratelimit-remaining-requests', b'995'), (b'x-ratelimit-remaining-tokens', b'10935'), (b'x-ratelimit-reset-requests', b'7m12s'), (b'x-ratelimit-reset-tokens', b'5.324999999s'), (b'x-request-id', b'req_01k860ppdmfg18xh4rgpk9ryjr'), (b'via', b'1.1 google'), (b'cf-cache-status', b'DYNAMIC'), (b'Server', b'cloudflare'), (b'CF-RAY', b'99293cfc0d17426e-MAA'), (b'alt-svc', b'h3=":443"; ma=86400')])
+receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Wed, 22 Oct 2025 13:11:02 GMT'), (b'Content-Type', b'application/json'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Content-Encoding', b'gzip'), (b'Cache-Control', b'private, max-age=0, no-store, no-cache, must-revalidate'), (b'vary', b'Origin'), (b'x-groq-region', b'bom'), (b'x-ratelimit-limit-requests', b'1000'), (b'x-ratelimit-limit-tokens', b'12000'), (b'x-ratelimit-remaining-requests', b'995'), (b'x-ratelimit-remaining-tokens', b'10935'), (b'x-ratelimit-reset-requests', b'7m12s'), (b'x-ratelimit-reset-tokens', b'5.324999999s'), (b'x-request-id', b'req_01k860ppdmfg18xh4rgpk9ryjr'), (b'via', b'1.1 google'), (b'cf-cache-status', b'DYNAMIC'), (b'Server', b'cloudflare'), (b'CF-RAY', b'99293cfc0d17426e-MAA'), (b'alt-svc', b'h3=":443"; ma=86400')])
+2025-10-22 18:41:02,243 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-10-22 18:41:02,243 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+receive_response_body.started request=<Request [b'POST']>
+2025-10-22 18:41:02,244 - httpcore.http11 - DEBUG - receive_response_body.complete
+receive_response_body.complete
+2025-10-22 18:41:02,244 - httpcore.http11 - DEBUG - response_closed.started
+response_closed.started
+2025-10-22 18:41:02,244 - httpcore.http11 - DEBUG - response_closed.complete
+response_closed.complete
+2025-10-22 18:41:02,245 - groq._base_client - DEBUG - HTTP Response: POST https://api.groq.com/openai/v1/chat/completions "200 OK" Headers({'date': 'Wed, 22 Oct 2025 13:11:02 GMT', 'content-type': 'application/json', 'transfer-encoding': 'chunked', 'connection': 'keep-alive', 'content-encoding': 'gzip', 'cache-control': 'private, max-age=0, no-store, no-cache, must-revalidate', 'vary': 'Origin', 'x-groq-region': 'bom', 'x-ratelimit-limit-requests': '1000', 'x-ratelimit-limit-tokens': '12000', 'x-ratelimit-remaining-requests': '995', 'x-ratelimit-remaining-tokens': '10935', 'x-ratelimit-reset-requests': '7m12s', 'x-ratelimit-reset-tokens': '5.324999999s', 'x-request-id': 'req_01k860ppdmfg18xh4rgpk9ryjr', 'via': '1.1 google', 'cf-cache-status': 'DYNAMIC', 'server': 'cloudflare', 'cf-ray': '99293cfc0d17426e-MAA', 'alt-svc': 'h3=":443"; ma=86400'})
+HTTP Response: POST https://api.groq.com/openai/v1/chat/completions "200 OK" Headers({'date': 'Wed, 22 Oct 2025 13:11:02 GMT', 'content-type': 'application/json', 'transfer-encoding': 'chunked', 'connection': 'keep-alive', 'content-encoding': 'gzip', 'cache-control': 'private, max-age=0, no-store, no-cache, must-revalidate', 'vary': 'Origin', 'x-groq-region': 'bom', 'x-ratelimit-limit-requests': '1000', 'x-ratelimit-limit-tokens': '12000', 'x-ratelimit-remaining-requests': '995', 'x-ratelimit-remaining-tokens': '10935', 'x-ratelimit-reset-requests': '7m12s', 'x-ratelimit-reset-tokens': '5.324999999s', 'x-request-id': 'req_01k860ppdmfg18xh4rgpk9ryjr', 'via': '1.1 google', 'cf-cache-status': 'DYNAMIC', 'server': 'cloudflare', 'cf-ray': '99293cfc0d17426e-MAA', 'alt-svc': 'h3=":443"; ma=86400'})
+2025-10-22 18:41:02,246 - conversation_manager - INFO - ✅ Received from Groq: {
+  "response": "Applied! Port 27015 is now blocked for incoming and outgoing traffic.",
+   "action": "apply",
+   "intent": {
+       "name": "Block Po...
+✅ Received from Groq: {
+  "response": "Applied! Port 27015 is now blocked for incoming and outgoing traffic.",
+   "action": "apply",
+   "intent": {
+       "name": "Block Po...
+2025-10-22 18:41:02,247 - conversation_manager - INFO - ✅ Parsed response - Action: apply, Policy: security
+✅ Parsed response - Action: apply, Policy: security
+2025-10-22 18:41:02,247 - api_server_v3 - INFO - 🤖 Raw response from LLM: {"response": "Applied! Port 27015 is now blocked for incoming and outgoing traffic.", "action": "apply", "intent": {"name": "Block Port 27015", "policy": "security", "priority": 80, "protocol": "both", "action": "block", "bandwidth": "unlimited"}}
+🤖 Raw response from LLM: {"response": "Applied! Port 27015 is now blocked for incoming and outgoing traffic.", "action": "apply", "intent": {"name": "Block Port 27015", "policy": "security", "priority": 80, "protocol": "both", "action": "block", "bandwidth": "unlimited"}}
+2025-10-22 18:41:02,247 - api_server_v3 - INFO - ✅ Parsed JSON response: {'response': 'Applied! Port 27015 is now blocked for incoming and outgoing traffic.', 'action': 'apply', 'intent': {'name': 'Block Port 27015', 'policy': 'security', 'priority': 80, 'protocol': 'both', 'action': 'block', 'bandwidth': 'unlimited'}}
+✅ Parsed JSON response: {'response': 'Applied! Port 27015 is now blocked for incoming and outgoing traffic.', 'action': 'apply', 'intent': {'name': 'Block Port 27015', 'policy': 'security', 'priority': 80, 'protocol': 'both', 'action': 'block', 'bandwidth': 'unlimited'}}
+2025-10-22 18:41:02,247 - sdn_controller_v2 - INFO - 📥 Applying LLM-generated intent 1
+📥 Applying LLM-generated intent 1
+2025-10-22 18:41:02,248 - sdn_controller_v2 - INFO - 📋 Intent spec: {'name': 'Block Port 27015', 'policy': 'security', 'priority': 80, 'protocol': 'both', 'action': 'block', 'bandwidth': 'unlimited'}
+📋 Intent spec: {'name': 'Block Port 27015', 'policy': 'security', 'priority': 80, 'protocol': 'both', 'action': 'block', 'bandwidth': 'unlimited'}
+2025-10-22 18:41:02,248 - sdn_controller_v2 - INFO - 🚫 Block rule (simulated)
+🚫 Block rule (simulated)
+2025-10-22 18:41:02,248 - sdn_controller_v2 - INFO - ✅ Applied LLM intent 1: Block Port 27015 (policy: security)
+✅ Applied LLM intent 1: Block Port 27015 (policy: security)
+2025-10-22 18:41:02,248 - api_server_v3 - INFO - ✅ Intent 1 applied successfully
+✅ Intent 1 applied successfully
+2025-10-22 18:41:02,249 - api_server_v3 - INFO - 📤 Final response: {'response': 'Applied! Port 27015 is now blocked for incoming and outgoing traffic.', 'action': 'applied', 'intent': {'name': 'Block Port 27015', 'policy': 'security', 'priority': 80, 'protocol': 'both', 'action': 'block', 'bandwidth': 'unlimited'}, 'intent_id': 1}
+📤 Final response: {'response': 'Applied! Port 27015 is now blocked for incoming and outgoing traffic.', 'action': 'applied', 'intent': {'name': 'Block Port 27015', 'policy': 'security', 'priority': 80, 'protocol': 'both', 'action': 'block', 'bandwidth': 'unlimited'}, 'intent_id': 1}
+2025-10-22 18:41:02,257 - api_server_v3 - INFO - 💬 WebSocket chat message: {'action': 'applied', 'intent': {'action': 'block', 'bandwidth': 'unlimited', 'name': 'Block Port 27015', 'policy': 'security', 'priority': 80, 'protocol': 'both'}, 'intent_id': 1, 'response': 'Applied! Port 27015 is now blocked for incoming and outgoing traffic.'}
+💬 WebSocket chat message: {'action': 'applied', 'intent': {'action': 'block', 'bandwidth': 'unlimited', 'name': 'Block Port 27015', 'policy': 'security', 'priority': 80, 'protocol': 'both'}, 'intent_id': 1, 'response': 'Applied! Port 27015 is now blocked for incoming and outgoing traffic.'}
+2025-10-22 18:41:02,259 - api_server_v3 - INFO - 📋 Returning 1 intents
+📋 Returning 1 intents
+2025-10-22 18:41:02,760 - api_server_v3 - INFO - 📋 Returning 1 intents
+📋 Returning 1 intents
+2025-10-22 18:41:03,817 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 161.43 Mbps (cycle: 0.06)
+📊 Simulated throughput: 161.43 Mbps (cycle: 0.06)
+2025-10-22 18:41:03,817 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 161.43, 'latency': 12.97, 'activeFlows': 5, 'packetLoss': 0.0072}
+📊 Stats: {'throughput': 161.43, 'latency': 12.97, 'activeFlows': 5, 'packetLoss': 0.0072}
+2025-10-22 18:41:06,818 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 139.80 Mbps (cycle: 0.11)
+📊 Simulated throughput: 139.80 Mbps (cycle: 0.11)
+2025-10-22 18:41:06,826 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 139.8, 'latency': 10.01, 'activeFlows': 12, 'packetLoss': 0.0055}
+📊 Stats: {'throughput': 139.8, 'latency': 10.01, 'activeFlows': 12, 'packetLoss': 0.0055}
+2025-10-22 18:41:09,817 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 147.28 Mbps (cycle: 0.16)
+📊 Simulated throughput: 147.28 Mbps (cycle: 0.16)
+2025-10-22 18:41:09,818 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 147.28, 'latency': 11.6, 'activeFlows': 7, 'packetLoss': 0.0045}
+📊 Stats: {'throughput': 147.28, 'latency': 11.6, 'activeFlows': 7, 'packetLoss': 0.0045}
+2025-10-22 18:41:12,817 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 149.79 Mbps (cycle: 0.21)
+📊 Simulated throughput: 149.79 Mbps (cycle: 0.21)
+2025-10-22 18:41:12,826 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 149.79, 'latency': 9.74, 'activeFlows': 10, 'packetLoss': 0.0009}
+📊 Stats: {'throughput': 149.79, 'latency': 9.74, 'activeFlows': 10, 'packetLoss': 0.0009}
+2025-10-22 18:41:15,817 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 107.68 Mbps (cycle: 0.26)
+📊 Simulated throughput: 107.68 Mbps (cycle: 0.26)
+2025-10-22 18:41:15,818 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 107.68, 'latency': 11.06, 'activeFlows': 9, 'packetLoss': 0.0036}
+📊 Stats: {'throughput': 107.68, 'latency': 11.06, 'activeFlows': 9, 'packetLoss': 0.0036}
+2025-10-22 18:41:18,818 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 148.37 Mbps (cycle: 0.31)
+📊 Simulated throughput: 148.37 Mbps (cycle: 0.31)
+2025-10-22 18:41:18,818 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 148.37, 'latency': 13.32, 'activeFlows': 5, 'packetLoss': 0}
+📊 Stats: {'throughput': 148.37, 'latency': 13.32, 'activeFlows': 5, 'packetLoss': 0}
+2025-10-22 18:41:20,662 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 150.08 Mbps (cycle: 0.34)
+📊 Simulated throughput: 150.08 Mbps (cycle: 0.34)
+2025-10-22 18:41:20,663 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 150.08, 'latency': 11.81, 'activeFlows': 6, 'packetLoss': 0.0049}
+📊 Stats: {'throughput': 150.08, 'latency': 11.81, 'activeFlows': 6, 'packetLoss': 0.0049}
+2025-10-22 18:41:20,676 - api_server_v3 - INFO - 🌊 Returning flows data
+🌊 Returning flows data
+2025-10-22 18:41:21,818 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 136.51 Mbps (cycle: 0.36)
+📊 Simulated throughput: 136.51 Mbps (cycle: 0.36)
+2025-10-22 18:41:21,819 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 136.51, 'latency': 10.44, 'activeFlows': 11, 'packetLoss': 0.0062}
+📊 Stats: {'throughput': 136.51, 'latency': 10.44, 'activeFlows': 11, 'packetLoss': 0.0062}
+2025-10-22 18:41:25,659 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 137.12 Mbps (cycle: 0.43)
+📊 Simulated throughput: 137.12 Mbps (cycle: 0.43)
+2025-10-22 18:41:25,659 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 137.12, 'latency': 11.75, 'activeFlows': 7, 'packetLoss': 0.0057}
+📊 Stats: {'throughput': 137.12, 'latency': 11.75, 'activeFlows': 7, 'packetLoss': 0.0057}
+2025-10-22 18:41:28,660 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 128.96 Mbps (cycle: 0.48)
+📊 Simulated throughput: 128.96 Mbps (cycle: 0.48)
+2025-10-22 18:41:28,660 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 128.96, 'latency': 10.13, 'activeFlows': 5, 'packetLoss': 0.0023}
+📊 Stats: {'throughput': 128.96, 'latency': 10.13, 'activeFlows': 5, 'packetLoss': 0.0023}
+2025-10-22 18:41:31,660 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 83.57 Mbps (cycle: 0.53)
+📊 Simulated throughput: 83.57 Mbps (cycle: 0.53)
+2025-10-22 18:41:31,661 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 83.57, 'latency': 6.97, 'activeFlows': 5, 'packetLoss': 0.0045}
+📊 Stats: {'throughput': 83.57, 'latency': 6.97, 'activeFlows': 5, 'packetLoss': 0.0045}
+2025-10-22 18:41:34,659 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 50.00 Mbps (cycle: 0.58)
+📊 Simulated throughput: 50.00 Mbps (cycle: 0.58)
+2025-10-22 18:41:34,659 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 50, 'latency': 7.26, 'activeFlows': 8, 'packetLoss': 0.0113}
+📊 Stats: {'throughput': 50, 'latency': 7.26, 'activeFlows': 8, 'packetLoss': 0.0113}
+2025-10-22 18:41:37,660 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 56.18 Mbps (cycle: 0.63)
+📊 Simulated throughput: 56.18 Mbps (cycle: 0.63)
+2025-10-22 18:41:37,660 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 56.18, 'latency': 8.24, 'activeFlows': 10, 'packetLoss': 0.0024}
+📊 Stats: {'throughput': 56.18, 'latency': 8.24, 'activeFlows': 10, 'packetLoss': 0.0024}
+2025-10-22 18:41:40,658 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 77.60 Mbps (cycle: 0.68)
+📊 Simulated throughput: 77.60 Mbps (cycle: 0.68)
+2025-10-22 18:41:40,658 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 77.6, 'latency': 10.07, 'activeFlows': 7, 'packetLoss': 0.0032}
+📊 Stats: {'throughput': 77.6, 'latency': 10.07, 'activeFlows': 7, 'packetLoss': 0.0032}
+2025-10-22 18:41:43,658 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 62.55 Mbps (cycle: 0.73)
+📊 Simulated throughput: 62.55 Mbps (cycle: 0.73)
+2025-10-22 18:41:43,659 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 62.55, 'latency': 5.82, 'activeFlows': 5, 'packetLoss': 0.0005}
+📊 Stats: {'throughput': 62.55, 'latency': 5.82, 'activeFlows': 5, 'packetLoss': 0.0005}
+2025-10-22 18:41:46,662 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 76.25 Mbps (cycle: 0.78)
+📊 Simulated throughput: 76.25 Mbps (cycle: 0.78)
+2025-10-22 18:41:46,663 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 76.25, 'latency': 6.55, 'activeFlows': 9, 'packetLoss': 0.0046}
+📊 Stats: {'throughput': 76.25, 'latency': 6.55, 'activeFlows': 9, 'packetLoss': 0.0046}
+2025-10-22 18:41:49,659 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 73.66 Mbps (cycle: 0.83)
+📊 Simulated throughput: 73.66 Mbps (cycle: 0.83)
+2025-10-22 18:41:49,660 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 73.66, 'latency': 7.95, 'activeFlows': 8, 'packetLoss': 0.0085}
+📊 Stats: {'throughput': 73.66, 'latency': 7.95, 'activeFlows': 8, 'packetLoss': 0.0085}
+2025-10-22 18:41:52,659 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 50.00 Mbps (cycle: 0.88)
+📊 Simulated throughput: 50.00 Mbps (cycle: 0.88)
+2025-10-22 18:41:52,659 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 50, 'latency': 7.02, 'activeFlows': 8, 'packetLoss': 0.0058}
+📊 Stats: {'throughput': 50, 'latency': 7.02, 'activeFlows': 8, 'packetLoss': 0.0058}
+2025-10-22 18:41:55,663 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 73.59 Mbps (cycle: 0.93)
+📊 Simulated throughput: 73.59 Mbps (cycle: 0.93)
+2025-10-22 18:41:55,664 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 73.59, 'latency': 8.02, 'activeFlows': 8, 'packetLoss': 0.006}
+📊 Stats: {'throughput': 73.59, 'latency': 8.02, 'activeFlows': 8, 'packetLoss': 0.006}
+2025-10-22 18:41:58,661 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 78.35 Mbps (cycle: 0.98)
+📊 Simulated throughput: 78.35 Mbps (cycle: 0.98)
+2025-10-22 18:41:58,661 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 78.35, 'latency': 7.91, 'activeFlows': 11, 'packetLoss': 0.0104}
+📊 Stats: {'throughput': 78.35, 'latency': 7.91, 'activeFlows': 11, 'packetLoss': 0.0104}
+2025-10-22 18:42:01,658 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 109.43 Mbps (cycle: 0.03)
+📊 Simulated throughput: 109.43 Mbps (cycle: 0.03)
+2025-10-22 18:42:01,659 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 109.43, 'latency': 8.02, 'activeFlows': 10, 'packetLoss': 0.0039}
+📊 Stats: {'throughput': 109.43, 'latency': 8.02, 'activeFlows': 10, 'packetLoss': 0.0039}
+2025-10-22 18:42:04,660 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 169.49 Mbps (cycle: 0.08)
+📊 Simulated throughput: 169.49 Mbps (cycle: 0.08)
+2025-10-22 18:42:04,661 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 169.49, 'latency': 12.88, 'activeFlows': 10, 'packetLoss': 0.0115}
+📊 Stats: {'throughput': 169.49, 'latency': 12.88, 'activeFlows': 10, 'packetLoss': 0.0115}
+2025-10-22 18:42:07,660 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 144.77 Mbps (cycle: 0.13)
+📊 Simulated throughput: 144.77 Mbps (cycle: 0.13)
+2025-10-22 18:42:07,660 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 144.77, 'latency': 10.98, 'activeFlows': 10, 'packetLoss': 0.0038}
+📊 Stats: {'throughput': 144.77, 'latency': 10.98, 'activeFlows': 10, 'packetLoss': 0.0038}
+2025-10-22 18:42:10,660 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 159.82 Mbps (cycle: 0.18)
+📊 Simulated throughput: 159.82 Mbps (cycle: 0.18)
+2025-10-22 18:42:10,660 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 159.82, 'latency': 11.82, 'activeFlows': 6, 'packetLoss': 0.0046}
+📊 Stats: {'throughput': 159.82, 'latency': 11.82, 'activeFlows': 6, 'packetLoss': 0.0046}
+2025-10-22 18:42:13,660 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 127.55 Mbps (cycle: 0.23)
+📊 Simulated throughput: 127.55 Mbps (cycle: 0.23)
+2025-10-22 18:42:13,660 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 127.55, 'latency': 10.48, 'activeFlows': 6, 'packetLoss': 0.0055}
+📊 Stats: {'throughput': 127.55, 'latency': 10.48, 'activeFlows': 6, 'packetLoss': 0.0055}
+2025-10-22 18:42:16,661 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 140.53 Mbps (cycle: 0.28)
+📊 Simulated throughput: 140.53 Mbps (cycle: 0.28)
+2025-10-22 18:42:16,661 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 140.53, 'latency': 11.61, 'activeFlows': 5, 'packetLoss': 0.0072}
+📊 Stats: {'throughput': 140.53, 'latency': 11.61, 'activeFlows': 5, 'packetLoss': 0.0072}
+2025-10-22 18:42:19,659 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 160.63 Mbps (cycle: 0.33)
+📊 Simulated throughput: 160.63 Mbps (cycle: 0.33)
+2025-10-22 18:42:19,659 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 160.63, 'latency': 10.6, 'activeFlows': 5, 'packetLoss': 0.0048}
+📊 Stats: {'throughput': 160.63, 'latency': 10.6, 'activeFlows': 5, 'packetLoss': 0.0048}
+2025-10-22 18:42:20,661 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 157.22 Mbps (cycle: 0.34)
+📊 Simulated throughput: 157.22 Mbps (cycle: 0.34)
+2025-10-22 18:42:20,661 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 157.22, 'latency': 12.2, 'activeFlows': 12, 'packetLoss': 0.002}
+📊 Stats: {'throughput': 157.22, 'latency': 12.2, 'activeFlows': 12, 'packetLoss': 0.002}
+2025-10-22 18:42:20,673 - api_server_v3 - INFO - 🌊 Returning flows data
+🌊 Returning flows data
+2025-10-22 18:43:20,659 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 138.54 Mbps (cycle: 0.34)
+📊 Simulated throughput: 138.54 Mbps (cycle: 0.34)
+2025-10-22 18:43:20,660 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 138.54, 'latency': 11.49, 'activeFlows': 10, 'packetLoss': 0.0047}
+📊 Stats: {'throughput': 138.54, 'latency': 11.49, 'activeFlows': 10, 'packetLoss': 0.0047}
+2025-10-22 18:43:20,670 - api_server_v3 - INFO - 🌊 Returning flows data
+🌊 Returning flows data
+2025-10-22 18:44:20,660 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 132.65 Mbps (cycle: 0.34)
+📊 Simulated throughput: 132.65 Mbps (cycle: 0.34)
+2025-10-22 18:44:20,660 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 132.65, 'latency': 12.48, 'activeFlows': 8, 'packetLoss': 0.0044}
+📊 Stats: {'throughput': 132.65, 'latency': 12.48, 'activeFlows': 8, 'packetLoss': 0.0044}
+2025-10-22 18:44:20,665 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 155.49 Mbps (cycle: 0.34)
+📊 Simulated throughput: 155.49 Mbps (cycle: 0.34)
+2025-10-22 18:44:20,665 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 155.49, 'latency': 10.1, 'activeFlows': 7, 'packetLoss': 0.0091}
+📊 Stats: {'throughput': 155.49, 'latency': 10.1, 'activeFlows': 7, 'packetLoss': 0.0091}
+2025-10-22 18:45:20,659 - api_server_v3 - INFO - 📡 Topology: 0 switches, 0 hosts
+📡 Topology: 0 switches, 0 hosts
+2025-10-22 18:45:20,689 - api_server_v3 - INFO - 🌊 Returning flows data
+🌊 Returning flows data
+2025-10-22 18:45:22,659 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 139.70 Mbps (cycle: 0.38)
+📊 Simulated throughput: 139.70 Mbps (cycle: 0.38)
+2025-10-22 18:45:22,659 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 139.7, 'latency': 11.41, 'activeFlows': 6, 'packetLoss': 0.0022}
+📊 Stats: {'throughput': 139.7, 'latency': 11.41, 'activeFlows': 6, 'packetLoss': 0.0022}
+2025-10-22 18:46:20,658 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 170.60 Mbps (cycle: 0.34)
+📊 Simulated throughput: 170.60 Mbps (cycle: 0.34)
+2025-10-22 18:46:20,659 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 170.6, 'latency': 14.36, 'activeFlows': 10, 'packetLoss': 0.0014}
+📊 Stats: {'throughput': 170.6, 'latency': 14.36, 'activeFlows': 10, 'packetLoss': 0.0014}
+2025-10-22 18:46:20,667 - api_server_v3 - INFO - 🌊 Returning flows data
+🌊 Returning flows data
+2025-10-22 18:47:20,659 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 169.45 Mbps (cycle: 0.34)
+📊 Simulated throughput: 169.45 Mbps (cycle: 0.34)
+2025-10-22 18:47:20,659 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 169.45, 'latency': 12.08, 'activeFlows': 10, 'packetLoss': 0.0042}
+📊 Stats: {'throughput': 169.45, 'latency': 12.08, 'activeFlows': 10, 'packetLoss': 0.0042}
+2025-10-22 18:47:20,668 - api_server_v3 - INFO - 🌊 Returning flows data
+🌊 Returning flows data
+2025-10-22 18:47:28,967 - api_server_v3 - INFO - 📋 Returning 1 intents
+📋 Returning 1 intents
+2025-10-22 18:48:20,660 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 168.06 Mbps (cycle: 0.34)
+📊 Simulated throughput: 168.06 Mbps (cycle: 0.34)
+2025-10-22 18:48:20,660 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 168.06, 'latency': 13.75, 'activeFlows': 10, 'packetLoss': 0.0077}
+📊 Stats: {'throughput': 168.06, 'latency': 13.75, 'activeFlows': 10, 'packetLoss': 0.0077}
+2025-10-22 18:48:20,671 - api_server_v3 - INFO - 🌊 Returning flows data
+🌊 Returning flows data
+2025-10-22 18:49:20,661 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 167.06 Mbps (cycle: 0.34)
+📊 Simulated throughput: 167.06 Mbps (cycle: 0.34)
+2025-10-22 18:49:20,661 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 167.06, 'latency': 14.24, 'activeFlows': 10, 'packetLoss': 0.0003}
+📊 Stats: {'throughput': 167.06, 'latency': 14.24, 'activeFlows': 10, 'packetLoss': 0.0003}
+2025-10-22 18:49:20,670 - api_server_v3 - INFO - 🌊 Returning flows data
+🌊 Returning flows data
+2025-10-22 18:50:20,661 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 130.56 Mbps (cycle: 0.34)
+📊 Simulated throughput: 130.56 Mbps (cycle: 0.34)
+2025-10-22 18:50:20,661 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 130.56, 'latency': 10.05, 'activeFlows': 8, 'packetLoss': 0.0067}
+📊 Stats: {'throughput': 130.56, 'latency': 10.05, 'activeFlows': 8, 'packetLoss': 0.0067}
+2025-10-22 18:50:20,669 - api_server_v3 - INFO - 🌊 Returning flows data
+🌊 Returning flows data
+2025-10-22 18:51:20,662 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 133.01 Mbps (cycle: 0.34)
+📊 Simulated throughput: 133.01 Mbps (cycle: 0.34)
+2025-10-22 18:51:20,662 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 133.01, 'latency': 12.87, 'activeFlows': 12, 'packetLoss': 0.0047}
+📊 Stats: {'throughput': 133.01, 'latency': 12.87, 'activeFlows': 12, 'packetLoss': 0.0047}
+2025-10-22 18:51:20,670 - api_server_v3 - INFO - 🌊 Returning flows data
+🌊 Returning flows data
+2025-10-22 18:51:23,547 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 172.90 Mbps (cycle: 0.39)
+📊 Simulated throughput: 172.90 Mbps (cycle: 0.39)
+2025-10-22 18:51:23,548 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 172.9, 'latency': 11.03, 'activeFlows': 8, 'packetLoss': 0.0052}
+📊 Stats: {'throughput': 172.9, 'latency': 11.03, 'activeFlows': 8, 'packetLoss': 0.0052}
+2025-10-22 18:51:24,818 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 155.83 Mbps (cycle: 0.41)
+📊 Simulated throughput: 155.83 Mbps (cycle: 0.41)
+2025-10-22 18:51:24,819 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 155.83, 'latency': 12.95, 'activeFlows': 5, 'packetLoss': 0}
+📊 Stats: {'throughput': 155.83, 'latency': 12.95, 'activeFlows': 5, 'packetLoss': 0}
+2025-10-22 18:51:27,817 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 138.17 Mbps (cycle: 0.46)
+📊 Simulated throughput: 138.17 Mbps (cycle: 0.46)
+2025-10-22 18:51:27,818 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 138.17, 'latency': 9.4, 'activeFlows': 6, 'packetLoss': 0.0063}
+📊 Stats: {'throughput': 138.17, 'latency': 9.4, 'activeFlows': 6, 'packetLoss': 0.0063}
+2025-10-22 18:51:30,818 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 87.95 Mbps (cycle: 0.51)
+📊 Simulated throughput: 87.95 Mbps (cycle: 0.51)
+2025-10-22 18:51:30,819 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 87.95, 'latency': 8.8, 'activeFlows': 9, 'packetLoss': 0.0149}
+📊 Stats: {'throughput': 87.95, 'latency': 8.8, 'activeFlows': 9, 'packetLoss': 0.0149}
+2025-10-22 18:51:34,659 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 71.42 Mbps (cycle: 0.58)
+📊 Simulated throughput: 71.42 Mbps (cycle: 0.58)
+2025-10-22 18:51:34,660 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 71.42, 'latency': 8.49, 'activeFlows': 10, 'packetLoss': 0.0045}
+📊 Stats: {'throughput': 71.42, 'latency': 8.49, 'activeFlows': 10, 'packetLoss': 0.0045}
+2025-10-22 18:51:37,660 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 67.27 Mbps (cycle: 0.63)
+📊 Simulated throughput: 67.27 Mbps (cycle: 0.63)
+2025-10-22 18:51:37,661 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 67.27, 'latency': 9.78, 'activeFlows': 12, 'packetLoss': 0.0078}
+📊 Stats: {'throughput': 67.27, 'latency': 9.78, 'activeFlows': 12, 'packetLoss': 0.0078}
+2025-10-22 18:51:40,661 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 69.24 Mbps (cycle: 0.68)
+📊 Simulated throughput: 69.24 Mbps (cycle: 0.68)
+2025-10-22 18:51:40,661 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 69.24, 'latency': 7.49, 'activeFlows': 8, 'packetLoss': 0.0033}
+📊 Stats: {'throughput': 69.24, 'latency': 7.49, 'activeFlows': 8, 'packetLoss': 0.0033}
+2025-10-22 18:51:43,658 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 60.43 Mbps (cycle: 0.73)
+📊 Simulated throughput: 60.43 Mbps (cycle: 0.73)
+2025-10-22 18:51:43,659 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 60.43, 'latency': 5.79, 'activeFlows': 9, 'packetLoss': 0.0024}
+📊 Stats: {'throughput': 60.43, 'latency': 5.79, 'activeFlows': 9, 'packetLoss': 0.0024}
+2025-10-22 18:51:46,660 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 74.63 Mbps (cycle: 0.78)
+📊 Simulated throughput: 74.63 Mbps (cycle: 0.78)
+2025-10-22 18:51:46,660 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 74.63, 'latency': 6.67, 'activeFlows': 8, 'packetLoss': 0.0046}
+📊 Stats: {'throughput': 74.63, 'latency': 6.67, 'activeFlows': 8, 'packetLoss': 0.0046}
+2025-10-22 18:51:49,659 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 60.69 Mbps (cycle: 0.83)
+📊 Simulated throughput: 60.69 Mbps (cycle: 0.83)
+2025-10-22 18:51:49,661 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 60.69, 'latency': 7.47, 'activeFlows': 12, 'packetLoss': 0.0068}
+📊 Stats: {'throughput': 60.69, 'latency': 7.47, 'activeFlows': 12, 'packetLoss': 0.0068}
+2025-10-22 18:51:52,659 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 50.00 Mbps (cycle: 0.88)
+📊 Simulated throughput: 50.00 Mbps (cycle: 0.88)
+2025-10-22 18:51:52,660 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 50, 'latency': 8.03, 'activeFlows': 7, 'packetLoss': 0.0027}
+📊 Stats: {'throughput': 50, 'latency': 8.03, 'activeFlows': 7, 'packetLoss': 0.0027}
+2025-10-22 18:51:55,660 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 65.81 Mbps (cycle: 0.93)
+📊 Simulated throughput: 65.81 Mbps (cycle: 0.93)
+2025-10-22 18:51:55,669 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 65.81, 'latency': 9.78, 'activeFlows': 5, 'packetLoss': 0.0068}
+📊 Stats: {'throughput': 65.81, 'latency': 9.78, 'activeFlows': 5, 'packetLoss': 0.0068}
+2025-10-22 18:51:58,659 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 69.54 Mbps (cycle: 0.98)
+📊 Simulated throughput: 69.54 Mbps (cycle: 0.98)
+2025-10-22 18:51:58,660 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 69.54, 'latency': 9.67, 'activeFlows': 5, 'packetLoss': 0.0118}
+📊 Stats: {'throughput': 69.54, 'latency': 9.67, 'activeFlows': 5, 'packetLoss': 0.0118}
+2025-10-22 18:52:01,660 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 111.49 Mbps (cycle: 0.03)
+📊 Simulated throughput: 111.49 Mbps (cycle: 0.03)
+2025-10-22 18:52:01,660 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 111.49, 'latency': 10.8, 'activeFlows': 11, 'packetLoss': 0.0061}
+📊 Stats: {'throughput': 111.49, 'latency': 10.8, 'activeFlows': 11, 'packetLoss': 0.0061}
+2025-10-22 18:52:04,661 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 155.95 Mbps (cycle: 0.08)
+📊 Simulated throughput: 155.95 Mbps (cycle: 0.08)
+2025-10-22 18:52:04,661 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 155.95, 'latency': 13.04, 'activeFlows': 8, 'packetLoss': 0.0001}
+📊 Stats: {'throughput': 155.95, 'latency': 13.04, 'activeFlows': 8, 'packetLoss': 0.0001}
+2025-10-22 18:52:07,660 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 168.04 Mbps (cycle: 0.13)
+📊 Simulated throughput: 168.04 Mbps (cycle: 0.13)
+2025-10-22 18:52:07,660 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 168.04, 'latency': 12.04, 'activeFlows': 8, 'packetLoss': 0.0027}
+📊 Stats: {'throughput': 168.04, 'latency': 12.04, 'activeFlows': 8, 'packetLoss': 0.0027}
+2025-10-22 18:52:10,659 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 161.27 Mbps (cycle: 0.18)
+📊 Simulated throughput: 161.27 Mbps (cycle: 0.18)
+2025-10-22 18:52:10,659 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 161.27, 'latency': 12.26, 'activeFlows': 8, 'packetLoss': 0.0069}
+📊 Stats: {'throughput': 161.27, 'latency': 12.26, 'activeFlows': 8, 'packetLoss': 0.0069}
+2025-10-22 18:52:13,660 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 133.04 Mbps (cycle: 0.23)
+📊 Simulated throughput: 133.04 Mbps (cycle: 0.23)
+2025-10-22 18:52:13,660 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 133.04, 'latency': 9.97, 'activeFlows': 6, 'packetLoss': 0.0044}
+📊 Stats: {'throughput': 133.04, 'latency': 9.97, 'activeFlows': 6, 'packetLoss': 0.0044}
+2025-10-22 18:52:16,658 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 124.38 Mbps (cycle: 0.28)
+📊 Simulated throughput: 124.38 Mbps (cycle: 0.28)
+2025-10-22 18:52:16,658 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 124.38, 'latency': 9.16, 'activeFlows': 7, 'packetLoss': 0.0062}
+📊 Stats: {'throughput': 124.38, 'latency': 9.16, 'activeFlows': 7, 'packetLoss': 0.0062}
+2025-10-22 18:52:19,661 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 141.78 Mbps (cycle: 0.33)
+📊 Simulated throughput: 141.78 Mbps (cycle: 0.33)
+2025-10-22 18:52:19,661 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 141.78, 'latency': 13.29, 'activeFlows': 12, 'packetLoss': 0.0065}
+📊 Stats: {'throughput': 141.78, 'latency': 13.29, 'activeFlows': 12, 'packetLoss': 0.0065}
+2025-10-22 18:52:20,661 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 135.60 Mbps (cycle: 0.34)
+📊 Simulated throughput: 135.60 Mbps (cycle: 0.34)
+2025-10-22 18:52:20,662 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 135.6, 'latency': 11.47, 'activeFlows': 8, 'packetLoss': 0.0049}
+📊 Stats: {'throughput': 135.6, 'latency': 11.47, 'activeFlows': 8, 'packetLoss': 0.0049}
+2025-10-22 18:52:20,671 - api_server_v3 - INFO - 🌊 Returning flows data
+🌊 Returning flows data
+2025-10-22 18:52:22,660 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 142.68 Mbps (cycle: 0.38)
+📊 Simulated throughput: 142.68 Mbps (cycle: 0.38)
+2025-10-22 18:52:22,661 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 142.68, 'latency': 11.63, 'activeFlows': 5, 'packetLoss': 0.0042}
+📊 Stats: {'throughput': 142.68, 'latency': 11.63, 'activeFlows': 5, 'packetLoss': 0.0042}
+2025-10-22 18:52:25,659 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 133.05 Mbps (cycle: 0.43)
+📊 Simulated throughput: 133.05 Mbps (cycle: 0.43)
+2025-10-22 18:52:25,660 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 133.05, 'latency': 12.81, 'activeFlows': 12, 'packetLoss': 0.0053}
+📊 Stats: {'throughput': 133.05, 'latency': 12.81, 'activeFlows': 12, 'packetLoss': 0.0053}
+2025-10-22 18:52:28,660 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 99.56 Mbps (cycle: 0.48)
+📊 Simulated throughput: 99.56 Mbps (cycle: 0.48)
+2025-10-22 18:52:28,660 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 99.56, 'latency': 8.21, 'activeFlows': 5, 'packetLoss': 0.0043}
+📊 Stats: {'throughput': 99.56, 'latency': 8.21, 'activeFlows': 5, 'packetLoss': 0.0043}
+2025-10-22 18:53:20,662 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 158.37 Mbps (cycle: 0.34)
+📊 Simulated throughput: 158.37 Mbps (cycle: 0.34)
+2025-10-22 18:53:20,663 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 158.37, 'latency': 12.87, 'activeFlows': 6, 'packetLoss': 0.0088}
+📊 Stats: {'throughput': 158.37, 'latency': 12.87, 'activeFlows': 6, 'packetLoss': 0.0088}
+2025-10-22 18:53:20,669 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 135.19 Mbps (cycle: 0.34)
+📊 Simulated throughput: 135.19 Mbps (cycle: 0.34)
+2025-10-22 18:53:20,669 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 135.19, 'latency': 12.2, 'activeFlows': 8, 'packetLoss': 0.0112}
+📊 Stats: {'throughput': 135.19, 'latency': 12.2, 'activeFlows': 8, 'packetLoss': 0.0112}
+2025-10-22 18:54:20,662 - api_server_v3 - INFO - 📡 Topology: 0 switches, 0 hosts
+📡 Topology: 0 switches, 0 hosts
+2025-10-22 18:54:20,672 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 150.65 Mbps (cycle: 0.34)
+📊 Simulated throughput: 150.65 Mbps (cycle: 0.34)
+2025-10-22 18:54:20,674 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 150.65, 'latency': 12.22, 'activeFlows': 9, 'packetLoss': 0.0033}
+📊 Stats: {'throughput': 150.65, 'latency': 12.22, 'activeFlows': 9, 'packetLoss': 0.0033}
+2025-10-22 18:55:20,662 - api_server_v3 - INFO - 📡 Topology: 0 switches, 0 hosts
+📡 Topology: 0 switches, 0 hosts
+2025-10-22 18:55:20,666 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 161.06 Mbps (cycle: 0.34)
+📊 Simulated throughput: 161.06 Mbps (cycle: 0.34)
+2025-10-22 18:55:20,666 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 161.06, 'latency': 12.28, 'activeFlows': 10, 'packetLoss': 0.0073}
+📊 Stats: {'throughput': 161.06, 'latency': 12.28, 'activeFlows': 10, 'packetLoss': 0.0073}
+2025-10-22 18:55:20,681 - api_server_v3 - INFO - 🌊 Returning flows data
+🌊 Returning flows data
+2025-10-22 18:56:20,661 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 149.92 Mbps (cycle: 0.34)
+📊 Simulated throughput: 149.92 Mbps (cycle: 0.34)
+2025-10-22 18:56:20,662 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 149.92, 'latency': 13.49, 'activeFlows': 9, 'packetLoss': 0.0104}
+📊 Stats: {'throughput': 149.92, 'latency': 13.49, 'activeFlows': 9, 'packetLoss': 0.0104}
+2025-10-22 18:56:20,666 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 150.73 Mbps (cycle: 0.34)
+📊 Simulated throughput: 150.73 Mbps (cycle: 0.34)
+2025-10-22 18:56:20,667 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 150.73, 'latency': 10.89, 'activeFlows': 6, 'packetLoss': 0.0059}
+📊 Stats: {'throughput': 150.73, 'latency': 10.89, 'activeFlows': 6, 'packetLoss': 0.0059}
+2025-10-22 18:57:20,661 - api_server_v3 - INFO - 📡 Topology: 0 switches, 0 hosts
+📡 Topology: 0 switches, 0 hosts
+2025-10-22 18:57:20,666 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 126.67 Mbps (cycle: 0.34)
+📊 Simulated throughput: 126.67 Mbps (cycle: 0.34)
+2025-10-22 18:57:20,666 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 126.67, 'latency': 12.18, 'activeFlows': 6, 'packetLoss': 0}
+📊 Stats: {'throughput': 126.67, 'latency': 12.18, 'activeFlows': 6, 'packetLoss': 0}
+2025-10-22 18:57:20,684 - api_server_v3 - INFO - 🌊 Returning flows data
+🌊 Returning flows data
+2025-10-22 18:58:20,661 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 154.61 Mbps (cycle: 0.34)
+📊 Simulated throughput: 154.61 Mbps (cycle: 0.34)
+2025-10-22 18:58:20,661 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 154.61, 'latency': 12.31, 'activeFlows': 5, 'packetLoss': 0.0041}
+📊 Stats: {'throughput': 154.61, 'latency': 12.31, 'activeFlows': 5, 'packetLoss': 0.0041}
+2025-10-22 18:58:20,672 - api_server_v3 - INFO - 🌊 Returning flows data
+🌊 Returning flows data
+2025-10-22 18:59:20,661 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 165.92 Mbps (cycle: 0.34)
+📊 Simulated throughput: 165.92 Mbps (cycle: 0.34)
+2025-10-22 18:59:20,661 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 165.92, 'latency': 11.58, 'activeFlows': 8, 'packetLoss': 0.0052}
+📊 Stats: {'throughput': 165.92, 'latency': 11.58, 'activeFlows': 8, 'packetLoss': 0.0052}
+2025-10-22 19:00:20,661 - api_server_v3 - INFO - 📡 Topology: 0 switches, 0 hosts
+📡 Topology: 0 switches, 0 hosts
+2025-10-22 19:00:20,665 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 164.92 Mbps (cycle: 0.34)
+📊 Simulated throughput: 164.92 Mbps (cycle: 0.34)
+2025-10-22 19:00:20,665 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 164.92, 'latency': 13.51, 'activeFlows': 10, 'packetLoss': 0.0076}
+📊 Stats: {'throughput': 164.92, 'latency': 13.51, 'activeFlows': 10, 'packetLoss': 0.0076}
+2025-10-22 19:00:20,684 - api_server_v3 - INFO - 🌊 Returning flows data
+🌊 Returning flows data
+2025-10-22 19:01:20,660 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 152.58 Mbps (cycle: 0.34)
+📊 Simulated throughput: 152.58 Mbps (cycle: 0.34)
+2025-10-22 19:01:20,660 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 152.58, 'latency': 9.86, 'activeFlows': 11, 'packetLoss': 0.0042}
+📊 Stats: {'throughput': 152.58, 'latency': 9.86, 'activeFlows': 11, 'packetLoss': 0.0042}
+2025-10-22 19:01:20,666 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 144.26 Mbps (cycle: 0.34)
+📊 Simulated throughput: 144.26 Mbps (cycle: 0.34)
+2025-10-22 19:01:20,666 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 144.26, 'latency': 11.85, 'activeFlows': 7, 'packetLoss': 0.0072}
+📊 Stats: {'throughput': 144.26, 'latency': 11.85, 'activeFlows': 7, 'packetLoss': 0.0072}
+2025-10-22 19:02:20,658 - api_server_v3 - INFO - 📡 Topology: 0 switches, 0 hosts
+📡 Topology: 0 switches, 0 hosts
+2025-10-22 19:02:20,662 - sdn_controller_v2 - INFO - 📊 Simulated throughput: 165.32 Mbps (cycle: 0.34)
+📊 Simulated throughput: 165.32 Mbps (cycle: 0.34)
+2025-10-22 19:02:20,662 - api_server_v3 - DEBUG - 📊 Stats: {'throughput': 165.32, 'latency': 11.63, 'activeFlows': 8, 'packetLoss': 0.0056}
+📊 Stats: {'throughput': 165.32, 'latency': 11.63, 'activeFlows': 8, 'packetLoss': 0.0056}
+2025-10-22 19:02:20,682 - api_server_v3 - INFO - 🌊 Returning flows data
+🌊 Returning flows data

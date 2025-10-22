@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SDN Network Topology & Performance</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .chart-container { position: relative; height: 200px; }
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 min-h-screen text-white">
+  <div class="container mx-auto p-6 pb-24">
+    <!-- Header -->
+    <div class="mb-6">
+      <div class="flex items-center justify-between mb-4">
+        <h1 class="text-3xl font-bold">Network Topology & Performance Monitor</h1>
+        <div class="flex gap-2">
+          <button onclick="window.location.href='index.html'"
+            class="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded transition">
+            ← Back to Dashboard
+          </button>
+          <button onclick="refreshTopology()" class="bg-cyan-500 hover:bg-cyan-600 px-4 py-2 rounded transition">
+            🔄 Refresh
+          </button>
+          <button onclick="autoLayout()" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded transition">
+            🎯 Auto Layout
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
+      <!-- Topology Visualization -->
+      <div class="lg:col-span-3 bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg p-6">
+        <h2 class="text-xl font-bold mb-4">Network Topology</h2>
+        <div id="topology" class="w-full" style="height: 500px;"></div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="space-y-4">
+        <!-- Legend -->
+        <div class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg p-4">
+          <h3 class="font-bold mb-3">Legend</h3>
+          <div class="space-y-2 text-sm">
+            <div class="flex items-center gap-2">
+              <div class="w-6 h-6 bg-purple-500 rounded"></div><span>Controller</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="w-6 h-6 bg-cyan-500 rounded"></div><span>Switch</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="w-6 h-6 bg-blue-500 rounded-full"></div><span>Host</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="w-12 h-1 bg-red-500"></div><span>Control Link</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="w-12 h-1 bg-green-500"></div><span>Data Link</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Stats -->
+        <div class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg p-4">
+          <h3 class="font-bold mb-3">Network Stats</h3>
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between">
+              <span class="text-slate-400">Switches:</span>
+              <span id="stat-switches" class="font-mono text-cyan-400">0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">Hosts:</span>
+              <span id="stat-hosts" class="font-mono text-blue-400">0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">Links:</span>
+              <span id="stat-links" class="font-mono text-green-400">0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">Active Flows:</span>
+              <span id="stat-flows" class="font-mono text-yellow-400">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Node Info -->
+        <div class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg p-4">
+          <h3 class="font-bold mb-3">Selected Node</h3>
+          <div id="node-info" class="text-sm text-slate-400">Click a node to see details</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Real-Time Performance Graphs -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Throughput Graph -->
+      <div class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg p-6">
+        <h3 class="font-bold mb-4 flex items-center gap-2">
+          <span>📊</span> Throughput (Mbps)
+        </h3>
+        <div class="chart-container">
+          <canvas id="throughputChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Latency Graph -->
+      <div class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg p-6">
+        <h3 class="font-bold mb-4 flex items-center gap-2">
+          <span>⚡</span> Latency (ms)
+        </h3>
+        <div class="chart-container">
+          <canvas id="latencyChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Packet Loss Graph -->
+      <div class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg p-6">
+        <h3 class="font-bold mb-4 flex items-center gap-2">
+          <span>📉</span> Packet Loss (%)
+        </h3>
+        <div class="chart-container">
+          <canvas id="packetLossChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Active Flows Graph -->
+      <div class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg p-6">
+        <h3 class="font-bold mb-4 flex items-center gap-2">
+          <span>🌊</span> Active Flows
+        </h3>
+        <div class="chart-container">
+          <canvas id="flowsChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer id="footer"
+    class="fixed bottom-0 left-0 w-full bg-slate-900/90 backdrop-blur-md text-center text-slate-400 text-sm border-t border-slate-700 pt-4 pb-3 shadow-lg">
+    <p>© 2025 Virtual SDN Router Control Panel. All rights reserved.</p>
+    <p class="mt-1">
+      Developed by <span class="text-cyan-400 font-medium">Shivam Jha</span> |
+      <a href="mailto:jhashivam53741@gmail.com"
+        class="text-cyan-400 hover:text-cyan-300 hover:underline transition">Contact Developer</a>
+    </p>
+    <p class="mt-1">
+      <a href="https://github.com/Diluc99" target="_blank"
+        class="text-cyan-400 hover:text-cyan-300 hover:underline transition mr-3">GitHub</a>
+      <a href="https://www.linkedin.com/in/shivam-jhaa/" target="_blank"
+        class="text-cyan-400 hover:text-cyan-300 hover:underline transition">LinkedIn</a>
+    </p>
+  </footer>
+
+  <script>
+    const API_BASE = 'http://localhost:8080/api';
+    let svg, g, simulation, nodes = [], links = [];
+    
+    // Chart.js instances
+    let throughputChart, latencyChart, packetLossChart, flowsChart;
+    
+    // Data buffers for charts
+    const maxDataPoints = 20;
+    const chartData = {
+      labels: [],
+      throughput: [],
+      latency: [],
+      packetLoss: [],
+      flows: []
+    };
+
+    // Initialize Charts
+    function initCharts() {
+      const chartConfig = (label, borderColor, backgroundColor) => ({
+        type: 'line',
+        data: {
+          labels: chartData.labels,
+          datasets: [{
+            label: label,
+            data: [],
+            borderColor: borderColor,
+            backgroundColor: backgroundColor,
+            borderWidth: 2,
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: { mode: 'index', intersect: false }
+          },
+          scales: {
+            x: {
+              display: true,
+              grid: { color: 'rgba(148, 163, 184, 0.1)' },
+              ticks: { color: '#94a3b8', maxTicksLimit: 6 }
+            },
+            y: {
+              display: true,
+              grid: { color: 'rgba(148, 163, 184, 0.1)' },
+              ticks: { color: '#94a3b8' },
+              beginAtZero: true
+            }
+          },
+          animation: { duration: 300 }
+        }
+      });
+
+      throughputChart = new Chart(
+        document.getElementById('throughputChart'),
+        chartConfig('Throughput', '#06b6d4', 'rgba(6, 182, 212, 0.1)')
+      );
+
+      latencyChart = new Chart(
+        document.getElementById('latencyChart'),
+        chartConfig('Latency', '#eab308', 'rgba(234, 179, 8, 0.1)')
+      );
+
+      packetLossChart = new Chart(
+        document.getElementById('packetLossChart'),
+        chartConfig('Packet Loss', '#ef4444', 'rgba(239, 68, 68, 0.1)')
+      );
+
+      flowsChart = new Chart(
+        document.getElementById('flowsChart'),
+        chartConfig('Active Flows', '#3b82f6', 'rgba(59, 130, 246, 0.1)')
+      );
+    }
+
+    // Update Charts with new data
+    async function updateCharts() {
+      try {
+        const res = await fetch(`${API_BASE}/stats`);
+        const stats = await res.json();
+
+        const now = new Date().toLocaleTimeString();
+
+        // Add new data point
+        chartData.labels.push(now);
+        chartData.throughput.push(stats.throughput || 0);
+        chartData.latency.push(stats.latency || 0);
+        chartData.packetLoss.push((stats.packetLoss || 0) * 100);
+        chartData.flows.push(stats.activeFlows || 0);
+
+        // Keep only last maxDataPoints
+        if (chartData.labels.length > maxDataPoints) {
+          chartData.labels.shift();
+          chartData.throughput.shift();
+          chartData.latency.shift();
+          chartData.packetLoss.shift();
+          chartData.flows.shift();
+        }
+
+        // Update charts
+        throughputChart.data.labels = chartData.labels;
+        throughputChart.data.datasets[0].data = chartData.throughput;
+        throughputChart.update('none');
+
+        latencyChart.data.labels = chartData.labels;
+        latencyChart.data.datasets[0].data = chartData.latency;
+        latencyChart.update('none');
+
+        packetLossChart.data.labels = chartData.labels;
+        packetLossChart.data.datasets[0].data = chartData.packetLoss;
+        packetLossChart.update('none');
+
+        flowsChart.data.labels = chartData.labels;
+        flowsChart.data.datasets[0].data = chartData.flows;
+        flowsChart.update('none');
+
+      } catch (err) {
+        console.error('Error updating charts:', err);
+      }
+    }
+
+    // Initialize D3 Topology Visualization
+    function initVisualization() {
+      const container = d3.select('#topology');
+      const width = container.node().getBoundingClientRect().width;
+      const height = 500;
+
+      container.selectAll('*').remove();
+      svg = container.append('svg').attr('width', width).attr('height', height);
+
+      const zoom = d3.zoom().scaleExtent([0.1, 4]).on('zoom', e => g.attr('transform', e.transform));
+      svg.call(zoom);
+      g = svg.append('g');
+
+      // Arrow markers
+      svg.append('defs').selectAll('marker')
+        .data(['end'])
+        .enter().append('marker')
+        .attr('id', String)
+        .attr('viewBox', '0 -5 10 10')
+        .attr('refX', 25)
+        .attr('refY', 0)
+        .attr('markerWidth', 6)
+        .attr('markerHeight', 6)
+        .attr('orient', 'auto')
+        .append('path')
+        .attr('d', 'M0,-5L10,0L0,5')
+        .attr('fill', '#10b981');
+
+      simulation = d3.forceSimulation()
+        .force('link', d3.forceLink().id(d => d.id).distance(150))
+        .force('charge', d3.forceManyBody().strength(-500))
+        .force('center', d3.forceCenter(width / 2, height / 2))
+        .force('collision', d3.forceCollide().radius(50));
+    }
+
+    async function fetchTopology() {
+      try {
+        const res = await fetch(`${API_BASE}/topology`);
+        const data = await res.json();
+        buildTopology(data);
+        await updateStats(data);
+        updateVisualization();
+      } catch (err) {
+        console.error('Error fetching topology:', err);
+        // Use fallback topology
+        buildTopology({ switches: ['br0'] });
+        updateVisualization();
+      }
+    }
+
+    function buildTopology(data) {
+      nodes = [];
+      links = [];
+      
+      // Controller node
+      nodes.push({ id: 'controller', type: 'controller', name: 'SDN Controller' });
+
+      // Switch nodes
+      const switches = data.switches || ['br0'];
+      switches.forEach(sw => {
+        nodes.push({ id: `switch-${sw}`, type: 'switch', name: `Switch ${sw}`, dpid: sw });
+        links.push({ source: 'controller', target: `switch-${sw}`, type: 'control' });
+      });
+
+      // Host nodes
+      const hostData = [
+        { id: 'host1', ip: '10.0.0.1', mac: '00:00:00:00:00:01' },
+        { id: 'host2', ip: '10.0.0.2', mac: '00:00:00:00:00:02' },
+        { id: 'host3', ip: '10.0.0.3', mac: '00:00:00:00:00:03' }
+      ];
+      
+      hostData.forEach((h, idx) => {
+        nodes.push({ id: h.id, type: 'host', name: h.id, ip: h.ip, mac: h.mac });
+        const switchId = `switch-${switches[idx % switches.length]}`;
+        links.push({ source: switchId, target: h.id, type: 'data' });
+      });
+
+      // Inter-host communication links (dashed)
+      links.push({ source: 'host1', target: 'host2', type: 'data', dashed: true });
+      links.push({ source: 'host2', target: 'host3', type: 'data', dashed: true });
+    }
+
+    function updateVisualization() {
+      g.selectAll('*').remove();
+
+      // Links
+      const link = g.selectAll('.link')
+        .data(links)
+        .enter().append('line')
+        .attr('class', 'link')
+        .attr('stroke', d => d.type === 'control' ? '#ef4444' : '#10b981')
+        .attr('stroke-width', 2)
+        .attr('stroke-dasharray', d => d.dashed ? '5,5' : '0')
+        .attr('marker-end', d => d.type === 'data' && !d.dashed ? 'url(#end)' : '')
+        .attr('opacity', 0.6);
+
+      // Nodes
+      const node = g.selectAll('.node')
+        .data(nodes)
+        .enter().append('g')
+        .attr('class', 'node')
+        .style('cursor', 'pointer')
+        .call(d3.drag()
+          .on('start', dragstart)
+          .on('drag', dragged)
+          .on('end', dragend))
+        .on('click', showNodeInfo)
+        .on('mouseover', function() {
+          d3.select(this).select('rect, circle')
+            .transition().duration(200)
+            .attr('stroke-width', 5);
+        })
+        .on('mouseout', function() {
+          d3.select(this).select('rect, circle')
+            .transition().duration(200)
+            .attr('stroke-width', 3);
+        });
+
+      node.each(function (d) {
+        const el = d3.select(this);
+        if (d.type === 'controller') {
+          el.append('rect')
+            .attr('x', -30).attr('y', -30)
+            .attr('width', 60).attr('height', 60)
+            .attr('fill', '#a855f7')
+            .attr('stroke', '#c084fc')
+            .attr('stroke-width', 3)
+            .attr('rx', 5);
+        } else if (d.type === 'switch') {
+          el.append('rect')
+            .attr('x', -25).attr('y', -25)
+            .attr('width', 50).attr('height', 50)
+            .attr('fill', '#06b6d4')
+            .attr('stroke', '#22d3ee')
+            .attr('stroke-width', 3)
+            .attr('rx', 5);
+        } else {
+          el.append('circle')
+            .attr('r', 25)
+            .attr('fill', '#3b82f6')
+            .attr('stroke', '#60a5fa')
+            .attr('stroke-width', 3);
+        }
+        
+        // Icons
+        el.append('text')
+          .attr('text-anchor', 'middle')
+          .attr('dy', 5)
+          .attr('font-size', '20px')
+          .text(d.type === 'controller' ? '⚙️' : d.type === 'switch' ? '🔀' : '💻');
+      });
+
+      // Labels
+      g.selectAll('.label')
+        .data(nodes)
+        .enter().append('text')
+        .attr('class', 'label')
+        .attr('text-anchor', 'middle')
+        .attr('dy', 45)
+        .attr('font-size', '12px')
+        .attr('fill', '#e2e8f0')
+        .attr('font-weight', 'bold')
+        .text(d => d.name);
+
+      simulation.nodes(nodes);
+      simulation.force('link').links(links);
+      simulation.on('tick', () => {
+        link
+          .attr('x1', d => d.source.x)
+          .attr('y1', d => d.source.y)
+          .attr('x2', d => d.target.x)
+          .attr('y2', d => d.target.y);
+        node.attr('transform', d => `translate(${d.x},${d.y})`);
+        g.selectAll('.label').attr('transform', d => `translate(${d.x},${d.y})`);
+      });
+      
+      simulation.alpha(1).restart();
+    }
+
+    const dragstart = (e, d) => {
+      if (!e.active) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
+    };
+    
+    const dragged = (e, d) => {
+      d.fx = e.x;
+      d.fy = e.y;
+    };
+    
+    const dragend = (e, d) => {
+      if (!e.active) simulation.alphaTarget(0);
+      d.fx = null;
+      d.fy = null;
+    };
+
+    function showNodeInfo(_, d) {
+      const info = document.getElementById('node-info');
+      info.innerHTML = `
+        <div class="space-y-2">
+          <div class="flex justify-between">
+            <span class="text-slate-400">Type:</span>
+            <span class="font-mono text-cyan-400">${d.type}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Name:</span>
+            <span class="font-mono">${d.name}</span>
+          </div>
+          ${d.ip ? `<div class="flex justify-between"><span class="text-slate-400">IP:</span><span class="font-mono text-green-400">${d.ip}</span></div>` : ''}
+          ${d.mac ? `<div class="flex justify-between"><span class="text-slate-400">MAC:</span><span class="font-mono text-blue-400">${d.mac}</span></div>` : ''}
+          ${d.dpid ? `<div class="flex justify-between"><span class="text-slate-400">DPID:</span><span class="font-mono text-purple-400">${d.dpid}</span></div>` : ''}
+        </div>`;
+    }
+
+    async function updateStats(data) {
+      document.getElementById('stat-switches').textContent = (data.switches?.length || 1);
+      document.getElementById('stat-hosts').textContent = 3;
+      document.getElementById('stat-links').textContent = links.length;
+      
+      try {
+        const res = await fetch(`${API_BASE}/flows`);
+        const flows = await res.json();
+        const count = Object.values(flows).flat().length;
+        document.getElementById('stat-flows').textContent = count || 0;
+      } catch {
+        document.getElementById('stat-flows').textContent = '0';
+      }
+    }
+
+    function autoLayout() {
+      nodes.forEach(n => {
+        n.fx = null;
+        n.fy = null;
+      });
+      simulation.alpha(1).restart();
+    }
+
+    function refreshTopology() {
+      fetchTopology();
+    }
+
+    // Initialize everything
+    console.log('🚀 Initializing Network Monitor...');
+    initVisualization();
+    initCharts();
+    fetchTopology();
+    
+    // Update intervals
+    setInterval(fetchTopology, 10000); // Topology every 10s
+    setInterval(updateCharts, 2000);   // Charts every 2s
+
+    // Footer animation
+    window.addEventListener('DOMContentLoaded', () => {
+      const footer = document.getElementById('footer');
+      footer.style.opacity = '0';
+      setTimeout(() => {
+        footer.style.transition = 'opacity 1s ease-out';
+        footer.style.opacity = '1';
+      }, 500);
+    });
+
+    console.log('✅ Network Monitor initialized');
+  </script>
+</body>
+</html>
