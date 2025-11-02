@@ -2,17 +2,21 @@
 import eventlet
 eventlet.monkey_patch()
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit
 import logging
 import json
 import time
+import os
 from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
-app = Flask(__name__)
+# Get the web directory path
+web_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'web')
+
+app = Flask(__name__, static_folder=web_dir, static_url_path='')
 CORS(app, resources={r"/*": {"origins": "*"}})
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 
@@ -32,6 +36,16 @@ def set_conversation_manager(conv_mgr):
     global conversation_mgr
     conversation_mgr = conv_mgr
     logger.info("✅ Conversation Manager registered with API server")
+
+@app.route('/', methods=['GET'])
+def serve_index():
+    """Serve the main index.html"""
+    return send_from_directory(web_dir, 'index.html')
+
+@app.route('/topology', methods=['GET'])
+def serve_topology():
+    """Serve the topology.html"""
+    return send_from_directory(web_dir, 'topology.html')
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
@@ -238,21 +252,26 @@ def chat():
             
             # Apply intent to controller
             if controller:
-                intent_to_apply = {
-                    'message': message,
-                    'intent': intent_data
-                }
-                success = controller.apply_intent(intent_id, intent_to_apply)
-                
-                if success:
+                result = controller.apply_intent(intent_data)
+
+                # apply_intent returns the intent_id on success, False on failure
+                if result:
+                    actual_intent_id = result
                     parsed_response['action'] = 'applied'
-                    parsed_response['intent_id'] = intent_id
-                    logger.info(f"✅ Intent {intent_id} applied successfully")
-                    
+                    parsed_response['intent_id'] = actual_intent_id
+                    logger.info(f"✅ Intent {actual_intent_id} applied successfully")
+
                     # Emit update to all connected clients
+                    # Find the intent in active_intents (it was just added)
+                    intent_details = None
+                    for intent in controller.active_intents:
+                        if intent.get('id') == actual_intent_id:
+                            intent_details = intent
+                            break
+
                     socketio.emit('intent_updated', {
-                        'id': intent_id,
-                        'intent': controller.intents.get(intent_id)
+                        'id': actual_intent_id,
+                        'intent': intent_details
                     })
                 else:
                     parsed_response['action'] = 'failed'
@@ -302,9 +321,9 @@ def handle_chat_message(data):
     logger.info(f"💬 WebSocket chat message: {data}")
     emit('chat_message', data, broadcast=True)
 
-def run_api_server(port=8080):
+def run_api_server(port=8080, host='0.0.0.0'):
     """Run the API server"""
-    logger.info(f"🚀 Starting API server on port {port}")
+    logger.info(f"🚀 Starting API server on {host}:{port}")
     try:
         socketio.run(app, host='0.0.0.0', port=port, debug=False, use_reloader=False)
     except Exception as e:

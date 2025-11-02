@@ -1,14 +1,25 @@
+# SDN Controller Framework
 os-ken==2.7.0
+
+# Web Framework & API
 flask==3.0.0
 flask-cors==4.0.0
-flask-socketio==5.3.4
+flask-socketio==5.3.5
 python-socketio==5.10.0
+
+# Async Support
 eventlet==0.35.2
-requests==2.31.0
-nltk==3.8.1
-fuzzywuzzy==0.18.0
-python-Levenshtein==0.23.0
-textblob==0.17.1
-groq==0.9.0
+
+# AI/LLM - Groq API
+groq==0.11.0
+
+# Environment Configuration
 python-dotenv==1.0.0
-# Commented: netaddr, pyyaml, webob, spacy, transformers, torch, scikit-learn, redis
+
+# HTTP & Network Utils
+requests==2.31.0
+urllib3==2.1.0
+
+# Data Processing
+python-dateutil==2.8.2
+six==1.16.0

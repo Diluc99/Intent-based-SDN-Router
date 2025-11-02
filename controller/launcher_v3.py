@@ -8,6 +8,7 @@ import time
 import signal
 import os
 import logging
+import requests
 from logging.handlers import RotatingFileHandler
 
 # Local imports
@@ -32,16 +33,38 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-def wait_for_api_server(port, timeout=30):
-    """Wait for API server to be available"""
+# Global controller reference
+controller_instance = None
+
+def wait_for_api_server(port, timeout=60):
+    """Wait for API server to become available with retry logic"""
     import socket
+    import time
+    
     start_time = time.time()
+    retry_count = 0
+    max_retries = 12  # 12 attempts over 60 seconds
+    
     while time.time() - start_time < timeout:
         try:
-            with socket.create_connection(('localhost', port), timeout=1):
-                return True
-        except (socket.error, socket.timeout):
-            time.sleep(1)
+            # First check if port is open
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(2)
+            result = sock.connect_ex(('localhost', port))
+            sock.close()
+            
+            if result == 0:
+                # Port is open, now check health endpoint
+                time.sleep(1)  # Give it a moment to be fully ready
+                response = requests.get(f'http://localhost:{port}/api/health', timeout=5)
+                if response.status_code == 200:
+                    return True
+        except Exception as e:
+            retry_count += 1
+            logger.debug(f"Health check attempt {retry_count}: {e}")
+        
+        time.sleep(5)  # Wait 5 seconds between attempts
+    
     return False
 
 def main():
@@ -60,8 +83,9 @@ def main():
         logger.error("❌ LLM mode is required. Set USE_LLM=true in .env file")
         sys.exit(1)
     
-    if not groq_key:
-        logger.error("❌ GROQ_API_KEY not found in .env file")
+    if not groq_key or groq_key == 'your-groq-api-key-here':
+        logger.error("❌ GROQ_API_KEY not configured in .env file")
+        logger.error("   Get your key from: https://console.groq.com/")
         sys.exit(1)
     
     logger.info(f"✅ Environment check passed")
@@ -74,38 +98,43 @@ def main():
         conversation_mgr = ConversationManager()
         api_server.set_conversation_manager(conversation_mgr)
         logger.info("✅ Conversation Manager initialized")
+        model = os.getenv('GROQ_MODEL', 'llama-3.3-70b-versatile')
+        logger.info(f"   - Using model: {model}")
     except Exception as e:
         logger.error(f"❌ Failed to initialize conversation manager: {e}")
+        logger.error("   Check if Groq API key is valid")
         sys.exit(1)
     
     # Start API server in separate thread
-    logger.info("🌐 Starting API server on port 8080...")
+    api_port = 8080
+    logger.info(f"🌐 Starting API server on port {api_port}...")
     api_thread = threading.Thread(
         target=api_server.run_api_server,
-        args=(8080,),
+        args=(api_port, '0.0.0.0'),
         daemon=True,
         name="APIServerThread"
     )
     api_thread.start()
-    
+
     # Wait for API server
-    if not wait_for_api_server(8080):
-        logger.error("❌ API server failed to start")
+    logger.info("   Waiting for API server to start...")
+    if not wait_for_api_server(api_port, timeout=60):
+        logger.error("❌ API server failed to start within 60 seconds")
         sys.exit(1)
     
     # Verify API server health
-    import requests
     try:
-        response = requests.get('http://localhost:8080/api/health', timeout=5)
+        response = requests.get(f'http://localhost:{api_port}/api/health', timeout=15)
         if response.status_code == 200:
             health = response.json()
             logger.info("✅ API server started successfully")
             logger.info(f"   - Status: {health.get('status')}")
             logger.info(f"   - LLM Enabled: {health.get('llm_enabled')}")
+            logger.info(f"   - Controller Active: {health.get('controller_active')}")
         else:
             logger.error(f"❌ API server health check failed: {response.status_code}")
             sys.exit(1)
-    except Exception as e:
+    except requests.exceptions.RequestException as e:
         logger.error(f"❌ Failed to connect to API server: {e}")
         sys.exit(1)
     
@@ -131,35 +160,54 @@ def main():
         logger.error(f"❌ Controller file not found: {controller_path}")
         sys.exit(1)
     
+    # Controller will self-register with API server when it initializes
+    logger.info("🔧 Controller will auto-register when it initializes...")
+    
     logger.info("=" * 70)
-    logger.info("🎮 Starting OS-KEN SDN Controller on port 6655")
+    logger.info("🎮 Starting OS-KEN SDN Controller on port 6653")
     logger.info("=" * 70)
     logger.info("")
     logger.info("📡 Services Running:")
-    logger.info("   - Web Interface: http://localhost:8001")
-    logger.info("   - API Server: http://localhost:8080")
-    logger.info("   - OpenFlow Controller: localhost:6655")
+    logger.info("   - Web Interface: http://localhost:8080")
+    logger.info("   - API Server: http://localhost:8080/api/")
+    logger.info("   - OpenFlow Controller: 0.0.0.0:6653")
+    logger.info("")
+    logger.info("🔗 Connect your switch:")
+    logger.info("   sudo ovs-vsctl set-controller br0 tcp:<YOUR_PC_IP>:6653")
     logger.info("")
     logger.info("💬 Chat with the AI to configure your network!")
+    logger.info("   Example: 'Block gaming ports'")
     logger.info("=" * 70)
     logger.info("")
     
     # Prepare os-ken arguments
     sys.argv = [
         'os-ken-manager',
-        '--ofp-tcp-listen-port', '6655',
+        '--ofp-tcp-listen-port', '6653',
         controller_path,
         '--verbose'
     ]
     
     try:
+        # Import and start os-ken manager
         from os_ken.cmd import manager
+        
+        logger.info("🚀 OS-KEN manager starting...")
         manager.main()
+        
     except KeyboardInterrupt:
-        logger.info("\n🛑 Shutting down...")
+        logger.info("\n" + "=" * 70)
+        logger.info("🛑 Received shutdown signal")
+        logger.info("=" * 70)
     except Exception as e:
-        logger.error(f"❌ OSKen controller failed: {e}", exc_info=True)
+        logger.error("=" * 70)
+        logger.error(f"❌ OSKen controller failed: {e}")
+        logger.error("=" * 70)
+        import traceback
+        traceback.print_exc()
         sys.exit(1)
+    finally:
+        logger.info("👋 Shutdown complete")
 
 if __name__ == '__main__':
     main()
